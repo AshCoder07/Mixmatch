@@ -33,7 +33,7 @@ const Leaderboard = lazy(() => import("./Leaderboard"));
 
 // Import logo images
 import Logo1 from "./assets/Logo1.png";
-import Logo2 from "./assets/Logo2.png";
+import tn from "./assets/tn.jpg";
 import Footer from "./Footer";
 
 // Loading component
@@ -119,7 +119,7 @@ const translations = {
     selectGame: "உங்கள் விளையாட்டைத் தேர்ந்தெடுக்கவும்",
     scienceQuiz: "அறிவியல் வினாடி வினா",
     geographyMapping: "புவியியல் வரைபடம்",
-
+    partsMarkingGame: "பாகங்கள் அடையாளம் காணும் விளையாட்டு",
     wordGuessGame: "சொல் அறிதல் விளையாட்டு",
     mathQuiz: "கணித வினாடி வினா",
     teamMembers: "குழு உறுப்பினர்கள்: 2023-2027 ",
@@ -239,7 +239,7 @@ const EnhancedHeader = memo(() => {
           <p className="extra-subtitle">{translations[language].designedBy}</p>
         </div>
         <div className="logo-placeholder right-logo">
-          <img src={Logo2} alt="Right Logo" className="logo-image-direct" />
+          <img src={tn} alt="Right Logo" className="logo-image-direct" />
         </div>
       </div>
       <div className="header-section">

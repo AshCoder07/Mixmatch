@@ -66,40 +66,42 @@ const translations = {
 // Sample word data
 const gameWords = {
   beginner: [
-    { word: "CAT", description: { en: "A small furry pet that meows", ta: "மியாவ் என்று சத்தம் போடும் சிறிய செல்லப்பிராணி" }},
-    { word: "DOG", description: { en: "A loyal pet that barks", ta: "குரைக்கும் வீரியமுள்ள செல்லப்பிராணி" }},
-    { word: "SUN", description: { en: "The bright star that gives us light", ta: "ஒளி தரும் பிரகாசமான நட்சத்திரம்" }},
-    { word: "TREE", description: { en: "A tall plant with branches and leaves", ta: "கிளைகள் மற்றும் இலைகளுடன் உயரமான தாவரம்" }},
-    { word: "BOOK", description: { en: "Something you read with pages", ta: "படிக்க பயன்படும் பக்கங்களுடன் கூடியது" }},
-    { word: "BIRD", description: { en: "An animal that can fly", ta: "பறக்க கூடிய விலங்கு" }},
-    { word: "FISH", description: { en: "An animal that lives in water", ta: "தண்ணீரில் வாழும் விலங்கு" }},
-    { word: "APPLE", description: { en: "A red or green fruit", ta: "சிவப்பு அல்லது பச்சை நிற பழம்" }},
-    { word: "HOUSE", description: { en: "A place where people live", ta: "மனிதர்கள் வாழும் இடம்" }},
-    { word: "WATER", description: { en: "Clear liquid we drink", ta: "நாம் குடிக்கும் தெளிவான திரவம்" }}
+    { word: "IRON", description: { en: "Metal with symbol Fe, used to make steel", ta: "Fe குறியீடு கொண்ட உலோகம், எஃகு தயாரிக்க பயன்படுகிறது" }},
+    { word: "GOLD", description: { en: "Precious yellow metal, symbol Au", ta: "மதிப்புமிக்க மஞ்சள் நிற உலோகம், குறியீடு Au" }},
+    { word: "SILVER", description: { en: "Shiny metal with symbol Ag", ta: "Ag குறியீடு கொண்ட பிரகாசமான உலோகம்" }},
+    { word: "OXYGEN", description: { en: "Gas we breathe, symbol O", ta: "நாம் சுவாசிக்கும் வாயு, குறியீடு O" }},
+    { word: "HYDROGEN", description: { en: "Lightest element, symbol H", ta: "அதிக இலகுவான மூலப்பொருள், குறியீடு H" }},
+    { word: "CARBON", description: { en: "Element found in coal and diamonds, symbol C", ta: "நெருப்பு மற்றும் வைரங்களில் உள்ள மூலப்பொருள், குறியீடு C" }},
+    { word: "SODIUM", description: { en: "Soft metal with symbol Na, found in salt", ta: "Na குறியீடு கொண்ட மிருதுவான உலோகம், உப்பில் உள்ளது" }},
+    { word: "COPPER", description: { en: "Reddish metal, symbol Cu", ta: "செந்நிற உலோகம், குறியீடு Cu" }},
+    { word: "NITROGEN", description: { en: "Gas making up most of air, symbol N", ta: "காற்றில் அதிகமாக உள்ள வாயு, குறியீடு N" }},
+    { word: "CALCIUM", description: { en: "Element important for bones, symbol Ca", ta: "எலும்புகளுக்கு முக்கியமான மூலப்பொருள், குறியீடு Ca" }}
   ],
+
   medium: [
-    { word: "COMPUTER", description: { en: "Electronic device for processing data", ta: "தகவல்களை செயல்படுத்தும் மின்னணு சாதனம்" }},
-    { word: "ELEPHANT", description: { en: "Large grey animal with a trunk", ta: "துதிக்கையுடன் கூடிய பெரிய சாம்பல் நிற விலங்கு" }},
-    { word: "RAINBOW", description: { en: "Colorful arc in the sky after rain", ta: "மழைக்கு பின் வானில் தோன்றும் வண்ண வளையம்" }},
-    { word: "MOUNTAIN", description: { en: "Very tall natural elevation", ta: "மிக உயரமான இயற்கை உயர்வு" }},
-    { word: "BUTTERFLY", description: { en: "Colorful insect with wings", ta: "இறக்கைகளுடன் கூடிய வண்ணமயமான பூச்சி" }},
-    { word: "TELEPHONE", description: { en: "Device used for making calls", ta: "அழைப்புகள் செய்ய பயன்படும் சாதனம்" }},
-    { word: "BICYCLE", description: { en: "Two-wheeled vehicle you pedal", ta: "மிதியடிக்கும் இரு சக்கர வாகனம்" }},
-    { word: "SANDWICH", description: { en: "Food made with bread and filling", ta: "ரொட்டி மற்றும் நிரப்பலுடன் செய்யப்படும் உணவு" }},
-    { word: "HOSPITAL", description: { en: "Place where sick people get treatment", ta: "நோயாளிகள் சிகிச்சை பெறும் இடம்" }},
-    { word: "LIBRARY", description: { en: "Place with many books", ta: "பல புத்தகங்கள் உள்ள இடம்" }}
+    { word: "URANIUM", description: { en: "Radioactive element, symbol U", ta: "கதிரியக்க மூலப்பொருள், குறியீடு U" }},
+    { word: "MERCURY", description: { en: "Liquid metal at room temperature, symbol Hg", ta: "அறை வெப்பத்தில் திரவமாக இருக்கும் உலோகம், குறியீடு Hg" }},
+    { word: "PLATINUM", description: { en: "Precious metal used in jewelry, symbol Pt", ta: "ஆபரணங்களில் பயன்படும் மதிப்புமிக்க உலோகம், குறியீடு Pt" }},
+    { word: "HELIUM", description: { en: "Light gas used in balloons, symbol He", ta: "படகுகளில் பயன்படுத்தப்படும் இலகு வாயு, குறியீடு He" }},
+    { word: "CHLORINE", description: { en: "Greenish gas used in cleaning, symbol Cl", ta: "சுத்திகரிப்பில் பயன்படுத்தப்படும் பச்சை நிற வாயு, குறியீடு Cl" }},
+    { word: "POTASSIUM", description: { en: "Element with symbol K, important for muscles", ta: "K குறியீடு கொண்ட மூலப்பொருள், தசைகளுக்கு முக்கியம்" }},
+    { word: "ZINC", description: { en: "Metal with symbol Zn, used in galvanization", ta: "Zn குறியீடு கொண்ட உலோகம், துத்தநாகம் பூச பயன்படுத்தப்படுகிறது" }},
+    { word: "NEON", description: { en: "Gas used in bright advertising lights, symbol Ne", ta: "விளம்பர விளக்குகளில் பயன்படும் வாயு, குறியீடு Ne" }},
+    { word: "ALUMINIUM", description: { en: "Lightweight metal, symbol Al", ta: "இலகுவான உலோகம், குறியீடு Al" }},
+    { word: "SULFUR", description: { en: "Yellow non-metal, symbol S", ta: "மஞ்சள் நிறமுள்ள உலோகமற்றது, குறியீடு S" }}
   ],
+
   advanced: [
-    { word: "ENCYCLOPEDIA", description: { en: "Comprehensive reference work", ta: "விரிவான குறிப்பு நூல்" }},
-    { word: "PHILOSOPHY", description: { en: "Study of fundamental questions", ta: "அடிப்படை கேள்விகளின் ஆய்வு" }},
-    { word: "CONSTELLATION", description: { en: "Group of stars forming a pattern", ta: "ஒரு வடிவத்தை உருவாக்கும் நட்சத்திரக் கூட்டம்" }},
-    { word: "ARCHITECTURE", description: { en: "Art and science of building design", ta: "கட்டிடம் வடிவமைப்பின் கலை மற்றும் அறிவியல்" }},
-    { word: "PHOTOGRAPHY", description: { en: "Art of creating images with cameras", ta: "கேமராக்களால் படங்கள் உருவாக்கும் கலை" }},
-    { word: "MATHEMATICS", description: { en: "Study of numbers and calculations", ta: "எண்கள் மற்றும் கணக்குகளின் ஆய்வு" }},
-    { word: "TEMPERATURE", description: { en: "Measure of how hot or cold", ta: "எவ்வளவு வெப்பம் அல்லது குளிர் என்பதன் அளவு" }},
-    { word: "VOCABULARY", description: { en: "Collection of words in a language", ta: "ஒரு மொழியில் உள்ள சொற்களின் தொகுப்பு" }},
-    { word: "UNIVERSITY", description: { en: "Institution of higher learning", ta: "உயர் கல்வி நிறுவனம்" }},
-    { word: "DICTIONARY", description: { en: "Book of word definitions", ta: "சொற்களின் பொருள் விளக்கங்கள் உள்ள புத்தகம்" }}
+    { word: "TECHNETIUM", description: { en: "First man-made element, symbol Tc", ta: "முதலில் மனிதனால் உருவாக்கப்பட்ட மூலப்பொருள், குறியீடு Tc" }},
+    { word: "TUNGSTEN", description: { en: "Highest melting point metal, symbol W", ta: "அதிக உருகும் புள்ளியுடைய உலோகம், குறியீடு W" }},
+    { word: "RUTHENIUM", description: { en: "Rare transition metal, symbol Ru", ta: "அரிதான இடைமாற்று உலோகம், குறியீடு Ru" }},
+    { word: "SEABORGIUM", description: { en: "Synthetic element named after Glenn Seaborg, symbol Sg", ta: "Glenn Seaborg பெயரில் அழைக்கப்படும் செயற்கை மூலப்பொருள், குறியீடு Sg" }},
+    { word: "NEPTUNIUM", description: { en: "Radioactive element after uranium, symbol Np", ta: "யுரேனியத்திற்கு பின் வரும் கதிரியக்க மூலப்பொருள், குறியீடு Np" }},
+    { word: "RHENIUM", description: { en: "Rare element used in superalloys, symbol Re", ta: "சூப்பர் அலாய்களில் பயன்படும் அரிதான மூலப்பொருள், குறியீடு Re" }},
+    { word: "OSMIUM", description: { en: "Densest naturally occurring element, symbol Os", ta: "அதிக அடர்த்தியுடன் இயற்கையாகக் காணப்படும் மூலப்பொருள், குறியீடு Os" }},
+    { word: "ACTINIUM", description: { en: "First element in actinide series, symbol Ac", ta: "ஆக்டினைட் வரிசையின் முதல் மூலப்பொருள், குறியீடு Ac" }},
+    { word: "CADMIUM", description: { en: "Toxic metal used in batteries, symbol Cd", ta: "மின்கலங்களில் பயன்படுத்தப்படும் நச்சு உலோகம், குறியீடு Cd" }},
+    { word: "FRANCIUM", description: { en: "Extremely rare and radioactive element, symbol Fr", ta: "மிக அரிதான மற்றும் கதிரியக்க மூலப்பொருள், குறியீடு Fr" }}
   ]
 };
 
@@ -311,8 +313,9 @@ const useHint = () => {
     setTimerActive(false);
     
     if (checkWordGuessed()) {
-      const timeBonus = Math.max(0, timeLeft * 2);
-      const questionScore = 100 + timeBonus;
+      let questionScore = 10; // Base score
+      const pointsDeducted = hintsUsedThisQuestion * 2; // 2 points per hint
+      questionScore = Math.max(1, questionScore - pointsDeducted);
       setScore(score + questionScore);
       setCorrectAnswers(correctAnswers + 1);
       setFeedback({ message: t.correctGuess, type: 'correct' });
@@ -485,7 +488,7 @@ const resetGame = () => {
             >
               {t.medium}
               <div style={{ fontSize: '14px', opacity: '0.9', marginTop: '4px' }}>
-                ⏱ 40{t.seconds} • 10 questions
+                ⏱ 50{t.seconds} • 10 questions
               </div>
             </button>
             
@@ -500,7 +503,7 @@ const resetGame = () => {
             >
               {t.advanced}
               <div style={{ fontSize: '14px', opacity: '0.9', marginTop: '4px' }}>
-                ⏱ 30{t.seconds} • 10 questions
+                ⏱ 50{t.seconds} • 10 questions
               </div>
             </button>
           </div>
@@ -523,6 +526,7 @@ const resetGame = () => {
         flexDirection: 'column'
       }}>
         {/* Header */}
+        <br />
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -533,7 +537,10 @@ const resetGame = () => {
           flexWrap: 'wrap',
           gap: '1rem'
         }}>
-         <button 
+          <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+            {t.question} {currentQuestionIndex + 1}/{randomQuestions.length}
+          </div>
+          <button 
               onClick={() => setLanguage(language === "en" ? "ta" : "en")}
               style={{
                 ...buttonStyle,
@@ -545,9 +552,7 @@ const resetGame = () => {
             >
               {t.languageButton}
             </button>
-          <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-            {t.question} {currentQuestionIndex + 1}/{randomQuestions.length}
-          </div>
+
           
           <div style={{
             fontSize: '18px',
@@ -576,6 +581,7 @@ const resetGame = () => {
           >
             🏠 {t.backToMenu}
           </button>
+          
         </div>
 
         {/* Progress Bar */}
@@ -676,7 +682,6 @@ const resetGame = () => {
             }}>
               {renderLetters()}
             </div>
-            
             {/* Action Buttons */}
             <div style={{
               display: 'flex',
@@ -797,7 +802,6 @@ const resetGame = () => {
                 🏆 {score} points
               </div>
               
-              
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
@@ -878,13 +882,12 @@ const resetGame = () => {
               
             </div>
           </div>
-          
         </div>
       </div>
     );
   }
 
-  return <div style={baseStyle}></div>;
+  return <div style=  {baseStyle}></div>;
 });
 
 export default WordGame;

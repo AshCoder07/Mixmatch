@@ -5,10 +5,170 @@ const PartsMarkingGame = () => {
   const [selectedParts, setSelectedParts] = useState(new Set());
   const [showAnswers, setShowAnswers] = useState(false);
   const [score, setScore] = useState(0);
+  const [language, setLanguage] = useState('english');
+
+  const translations = {
+    english: {
+      gameTitle: "Parts Marking Game",
+      gameSubtitle: "Click on any part of the diagram to identify it",
+      chooseTopic: "Choose a Topic:",
+      selectedParts: "Selected Parts",
+      gameControls: "Game Controls",
+      perfectScore: "🎉 Perfect Score!",
+      results: "📊 Results",
+      resultsText: "You identified",
+      outOf: "out of",
+      partsCorrectly: "parts correctly!",
+      checkAnswers: "Check Answers",
+      resultsShown: "Results Shown",
+      resetGame: "Reset Game",
+      answerKey: "📚 Answer Key - All",
+      allParts: "Parts",
+      noPartsSelected: "No parts selected yet. Click on the diagram to start!",
+      instructions: "💡 Instructions: Click on different parts of the diagram to identify them. Selected parts will be highlighted.",
+      topics: {
+        sperm: "Sperm Cell",
+        egg: "Egg Cell (Ovum)",
+        eye: "Human Eye",
+        plantcell: "Plant Cell",
+        animalcell: "Animal Cell",
+        circuit: "Electric Circuit",
+        solar: "Solar System"
+      },
+      parts: {
+        // Sperm parts
+        head: "Head",
+        acrosome: "Acrosome",
+        nucleus: "Nucleus",
+        "middle piece": "Middle Piece",
+        tail: "Tail",
+        mitochondria: "Mitochondria",
+        
+        // Egg parts
+        "corona radiata": "Corona Radiata",
+        "zona pellucida": "Zona Pellucida",
+        "cell membrane": "Cell Membrane",
+        cytoplasm: "Cytoplasm",
+        nucleolus: "Nucleolus",
+        
+        // Eye parts
+        sclera: "Sclera",
+        retina: "Retina",
+        lens: "Lens",
+        iris: "Iris",
+        cornea: "Cornea",
+        pupil: "Pupil",
+        "vitreous humor": "Vitreous Humor",
+        "optic nerve": "Optic Nerve",
+        
+        // Plant cell parts
+        "cell wall": "Cell Wall",
+        vacuole: "Vacuole",
+        chloroplast: "Chloroplast",
+        
+        // Animal cell parts
+        "endoplasmic reticulum": "Endoplasmic Reticulum",
+        lysosomes: "Lysosomes",
+        
+        // Circuit parts
+        wire: "Wire",
+        battery: "Battery",
+        switch: "Switch",
+        bulb: "Bulb",
+        resistor: "Resistor",
+        
+        // Solar system parts
+        sun: "Sun",
+        earth: "Earth",
+        mars: "Mars",
+        jupiter: "Jupiter",
+        saturn: "Saturn"
+      }
+    },
+    tamil: {
+      gameTitle: "பாகங்கள் அடையாளம் காணும் விளையாட்டு",
+      gameSubtitle: "பாகங்களை அடையாளம் காண வரைபடத்தில் கிளிக் செய்யுங்கள்",
+      chooseTopic: "தலைப்பு தேர்வு செய்யுங்கள்:",
+      selectedParts: "தேர்ந்தெடுக்கப்பட்ட பாகங்கள்",
+      gameControls: "விளையாட்டு கட்டுப்பாடுகள்",
+      perfectScore: "🎉 முழு மதிப்பெண்!",
+      results: "📊 முடிவுகள்",
+      resultsText: "நீங்கள் அடையாளம் கண்டுள்ளீர்கள்",
+      outOf: "க்கு",
+      partsCorrectly: "பாகங்கள் சரியாக!",
+      checkAnswers: "பதில்களை சரிபார்க்கவும்",
+      resultsShown: "முடிவுகள் காட்டப்பட்டுள்ளன",
+      resetGame: "விளையாட்டை மீட்டமைக்கவும்",
+      answerKey: "📚 விடைக்கோல் - அனைத்து",
+      allParts: "பாகங்கள்",
+      noPartsSelected: "இன்னும் பாகங்கள் தேர்ந்தெடுக்கப்படவில்லை. தொடங்க வரைபடத்தில் கிளிக் செய்யுங்கள்!",
+      instructions: "💡 வழிமுறைகள்: பாகங்களை அடையாளம் காண வரைபடத்தின் வெவ்வேறு பகுதிகளில் கிளிக் செய்யுங்கள். தேர்ந்தெடுக்கப்பட்ட பாகங்கள் தனிமைப்படுத்தப்படும்.",
+      topics: {
+        sperm: "விந்தணு",
+        egg: "கருமுட்டை",
+        eye: "மனித கண்",
+        plantcell: "தாவர செல்",
+        animalcell: "விலங்கு செல்",
+        circuit: "மின் சுற்று",
+        solar: "சூரிய குடும்பம்"
+      },
+      parts: {
+        // Sperm parts
+        head: "தலை",
+        acrosome: "அக்ரோசோம்",
+        nucleus: "அணுக்கரு",
+        "middle piece": "நடுப்பகுதி",
+        tail: "வால்",
+        mitochondria: "மைட்டோகான்ட்ரியா",
+        
+        // Egg parts
+        "corona radiata": "கொரோனா ரேடியேட்டா",
+        "zona pellucida": "சோனா பெல்லுசிடா",
+        "cell membrane": "செல் சவ்வு",
+        cytoplasm: "சைட்டோபிளாசம்",
+        nucleolus: "அணுக்கருவின்",
+        
+        // Eye parts
+        sclera: "ஸ்க்லீரா",
+        retina: "விழித்திரை",
+        lens: "லென்ஸ்",
+        iris: "கருவிழி",
+        cornea: "கார்னியா",
+        pupil: "மாணவன்",
+        "vitreous humor": "கண்ணாடி திரவம்",
+        "optic nerve": "பார்வை நரம்பு",
+        
+        // Plant cell parts
+        "cell wall": "செல் சுவர்",
+        vacuole: "திரவப்பை",
+        chloroplast: "பச்சையம்",
+        
+        // Animal cell parts
+        "endoplasmic reticulum": "எண்டோபிளாஸ்மிக் ரெட்டிகுலம்",
+        lysosomes: "லைசோசோம்கள்",
+        
+        // Circuit parts
+        wire: "கம்பி",
+        battery: "மின்கலம்",
+        switch: "சுவிட்ச்",
+        bulb: "விளக்கு",
+        resistor: "எதிர்ப்பி",
+        
+        // Solar system parts
+        sun: "சூரியன்",
+        earth: "பூமி",
+        mars: "செவ்வாய்",
+        jupiter: "வியாழன்",
+        saturn: "சனி"
+      }
+    }
+  };
+
+  const t = translations[language];
 
   const topics = {
     sperm: {
-      title: "Sperm Cell",
+      title: t.topics.sperm,
       diagram: (
         <svg viewBox="0 0 450 200" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -56,14 +216,14 @@ const PartsMarkingGame = () => {
                 strokeLinecap="round"
                 style={{cursor: 'pointer'}} data-part="tail"/>
           
-          <text x="225" y="180" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Sperm Cell</text>
+          <text x="225" y="180" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.sperm}</text>
         </svg>
       ),
       parts: ['head', 'acrosome', 'nucleus', 'middle piece', 'tail']
     },
 
     egg: {
-      title: "Egg Cell",
+      title: t.topics.egg,
       diagram: (
         <svg viewBox="0 0 400 400" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -112,14 +272,14 @@ const PartsMarkingGame = () => {
           <circle cx="200" cy="180" r="12" fill="#4B0082"
                   style={{cursor: 'pointer'}} data-part="nucleolus"/>
           
-          <text x="200" y="380" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Egg Cell (Ovum)</text>
+          <text x="200" y="380" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.egg}</text>
         </svg>
       ),
       parts: ['corona radiata', 'zona pellucida', 'cell membrane', 'cytoplasm', 'nucleus']
     },
     
     eye: {
-      title: "Human Eye",
+      title: t.topics.eye,
       diagram: (
         <svg viewBox="0 0 400 300" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -171,14 +331,14 @@ const PartsMarkingGame = () => {
                 stroke="#654321" strokeWidth="1" rx="6"
                 style={{cursor: 'pointer'}} data-part="optic nerve"/>
           
-          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Human Eye</text>
+          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.eye}</text>
         </svg>
       ),
       parts: ['sclera', 'retina', 'lens', 'iris', 'cornea']
     },
 
     plantcell: {
-      title: "Plant Cell",
+      title: t.topics.plantcell,
       diagram: (
         <svg viewBox="0 0 400 300" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -240,14 +400,14 @@ const PartsMarkingGame = () => {
             <ellipse cx="335" cy="225" rx="4" ry="8" fill="#228B22" opacity="0.7"/>
           </g>
           
-          <text x="200" y="285" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Plant Cell</text>
+          <text x="200" y="285" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.plantcell}</text>
         </svg>
       ),
       parts: ['cell wall', 'cell membrane', 'vacuole', 'nucleus', 'chloroplast']
     },
 
     animalcell: {
-      title: "Animal Cell",
+      title: t.topics.animalcell,
       diagram: (
         <svg viewBox="0 0 400 300" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -312,14 +472,14 @@ const PartsMarkingGame = () => {
             <circle cx="295" cy="185" r="3" fill="#DC143C"/>
           </g>
           
-          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Animal Cell</text>
+          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.animalcell}</text>
         </svg>
       ),
       parts: ['cell membrane', 'nucleus', 'mitochondria', 'endoplasmic reticulum', 'lysosomes']
     },
 
     circuit: {
-      title: "Electric Circuit",
+      title: t.topics.circuit,
       diagram: (
         <svg viewBox="0 0 400 300" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -342,7 +502,7 @@ const PartsMarkingGame = () => {
             <rect x="80" y="150" width="15" height="30" fill="#8B0000" rx="3"/>
             <text x="70" y="135" fontSize="14" fill="#000" fontWeight="bold">+</text>
             <text x="70" y="210" fontSize="14" fill="#000" fontWeight="bold">-</text>
-            <text x="95" y="225" fontSize="10" fill="#666" textAnchor="middle">Battery</text>
+            <text x="95" y="225" fontSize="10" fill="#666" textAnchor="middle">{t.parts.battery}</text>
           </g>
           
           {/* Switch - with movable contact */}
@@ -350,7 +510,7 @@ const PartsMarkingGame = () => {
             <circle cx="200" cy="100" r="6" fill="#000"/>
             <line x1="200" y1="100" x2="225" y2="80" stroke="#000" strokeWidth="4" strokeLinecap="round"/>
             <circle cx="225" cy="100" r="6" fill="#000"/>
-            <text x="212" y="75" fontSize="10" fill="#666" textAnchor="middle">Switch</text>
+            <text x="212" y="75" fontSize="10" fill="#666" textAnchor="middle">{t.parts.switch}</text>
           </g>
           
           {/* Light Bulb - with filament */}
@@ -358,7 +518,7 @@ const PartsMarkingGame = () => {
             <circle cx="300" cy="150" r="25" fill="#FFF8DC" stroke="#000" strokeWidth="3"/>
             <path d="M285 135 L315 165 M285 165 L315 135" stroke="#FFD700" strokeWidth="3"/>
             <path d="M290 150 Q300 140 310 150 Q300 160 290 150" stroke="#FFD700" strokeWidth="2" fill="none"/>
-            <text x="300" y="190" fontSize="10" fill="#666" textAnchor="middle">Bulb</text>
+            <text x="300" y="190" fontSize="10" fill="#666" textAnchor="middle">{t.parts.bulb}</text>
           </g>
           
           {/* Resistor - with zigzag pattern */}
@@ -367,17 +527,17 @@ const PartsMarkingGame = () => {
                   stroke="#000" strokeWidth="2" rx="6"/>
             <path d="M175 201 L180 195 L185 207 L190 195 L195 207 L200 195 L205 207 L210 195 L215 207 L220 195 L225 201" 
                   stroke="#000" strokeWidth="2" fill="none"/>
-            <text x="200" y="225" fontSize="10" fill="#666" textAnchor="middle">Resistor</text>
+            <text x="200" y="225" fontSize="10" fill="#666" textAnchor="middle">{t.parts.resistor}</text>
           </g>
           
-          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Electric Circuit</text>
+          <text x="200" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.circuit}</text>
         </svg>
       ),
       parts: ['wire', 'battery', 'switch', 'bulb', 'resistor']
     },
 
     solar: {
-      title: "Solar System",
+      title: t.topics.solar,
       diagram: (
         <svg viewBox="0 0 500 300" style={{width: '100%', height: '250px'}}>
           <defs>
@@ -430,7 +590,7 @@ const PartsMarkingGame = () => {
             <ellipse cx="430" cy="145" rx="15" ry="2" fill="#DEB887" opacity="0.5"/>
           </g>
           
-          <text x="250" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">Solar System</text>
+          <text x="250" y="280" textAnchor="middle" fontSize="16" fill="#333" fontWeight="bold">{t.topics.solar}</text>
         </svg>
       ),
       parts: ['sun', 'earth', 'mars', 'jupiter', 'saturn']
@@ -459,21 +619,50 @@ const PartsMarkingGame = () => {
     setScore(0);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(prevLang => prevLang === 'english' ? 'tamil' : 'english');
+  };
+
   return (
     <div style={{
       padding: '10px',
       fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f8f9fa',
+      backgroundColor: '#9333ea',
       minHeight: '100vh'
     }}>
       <div style={{maxWidth: '1000px', margin: '0 auto'}}>
-        {/* Header */}
+        {/* Header with Language Toggle */}
         <div style={{textAlign: 'center', marginBottom: '20px'}}>
-          <h1 style={{color: '#2c3e50', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', margin: '10px 0'}}>
-            Parts Marking Game
-          </h1>
-          <p style={{color: '#6c757d', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)'}}>
-            Click on any part of the diagram to identify it
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+            <div></div>
+            <h1 style={{color: '#ccd8e3ff', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', margin: '10px 0'}}>
+              {t.gameTitle}
+            </h1>
+            <button
+              onClick={toggleLanguage}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '20px',
+                fontSize: 'clamp(0.8rem, 2.5vw, 1rem)',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#0056b3';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#007bff';
+              }}
+            >
+              {language === 'english' ? 'தமிழ்' : 'English'}
+            </button>
+          </div>
+          <p style={{color: '#f3f7fbff', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)'}}>
+            {t.gameSubtitle}
           </p>
         </div>
 
@@ -486,7 +675,7 @@ const PartsMarkingGame = () => {
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
         }}>
           <h3 style={{margin: '0 0 15px 0', color: '#2c3e50', fontSize: 'clamp(1rem, 3vw, 1.3rem)'}}>
-            Choose a Topic:
+            {t.chooseTopic}
           </h3>
           <div style={{
             display: 'flex',
@@ -564,7 +753,7 @@ const PartsMarkingGame = () => {
                 minHeight: '250px',
                 border: '2px dashed #dee2e6',
                 borderRadius: '8px',
-                backgroundColor: '#fafafa'
+                backgroundColor: '#75c67dff'
               }}
             >
               {topics[selectedTopic].diagram}
@@ -574,9 +763,9 @@ const PartsMarkingGame = () => {
             <div style={{
               marginTop: '15px',
               padding: '15px',
-              backgroundColor: '#e7f3ff',
+              backgroundColor: '#edddceff',
               borderRadius: '8px',
-              border: '1px solid #b3d9ff'
+              border: '1px solid #2e0432ff'
             }}>
               <p style={{
                 margin: '0',
@@ -584,8 +773,7 @@ const PartsMarkingGame = () => {
                 fontSize: 'clamp(0.8rem, 2.5vw, 1rem)',
                 textAlign: 'center'
               }}>
-                💡 <strong>Instructions:</strong> Click on different parts of the diagram to identify them. 
-                Selected parts will be highlighted.
+                {t.instructions}
               </p>
             </div>
           </div>
@@ -609,7 +797,7 @@ const PartsMarkingGame = () => {
                 color: '#2c3e50',
                 fontSize: 'clamp(1rem, 3vw, 1.3rem)'
               }}>
-                Selected Parts ({selectedParts.size}/{topics[selectedTopic].parts.length})
+                {t.selectedParts} ({selectedParts.size}/{topics[selectedTopic].parts.length})
               </h3>
               
               <div style={{minHeight: '120px'}}>
@@ -620,7 +808,7 @@ const PartsMarkingGame = () => {
                     margin: '10px 0',
                     fontSize: 'clamp(0.8rem, 2.5vw, 1rem)'
                   }}>
-                    No parts selected yet. Click on the diagram to start!
+                    {t.noPartsSelected}
                   </p>
                 ) : (
                   <div style={{
@@ -635,7 +823,7 @@ const PartsMarkingGame = () => {
                           padding: '6px 12px',
                           backgroundColor: showAnswers 
                             ? (topics[selectedTopic].parts.includes(part) ? '#d4edda' : '#f8d7da')
-                            : '#e3f2fd',
+                            : '#fde3efff',
                           color: showAnswers 
                             ? (topics[selectedTopic].parts.includes(part) ? '#155724' : '#721c24')
                             : '#1976d2',
@@ -648,7 +836,7 @@ const PartsMarkingGame = () => {
                           display: 'inline-block'
                         }}
                       >
-                        {part}
+                        {t.parts[part] || part}
                         {showAnswers && (
                           <span style={{marginLeft: '5px'}}>
                             {topics[selectedTopic].parts.includes(part) ? '✓' : '✗'}
@@ -673,7 +861,7 @@ const PartsMarkingGame = () => {
                 color: '#2c3e50',
                 fontSize: 'clamp(1rem, 3vw, 1.3rem)'
               }}>
-                Game Controls
+                {t.gameControls}
               </h3>
 
               {showAnswers && (
@@ -689,14 +877,14 @@ const PartsMarkingGame = () => {
                     color: score === topics[selectedTopic].parts.length ? '#155724' : '#856404',
                     fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)'
                   }}>
-                    {score === topics[selectedTopic].parts.length ? '🎉 Perfect Score!' : '📊 Results'}
+                    {score === topics[selectedTopic].parts.length ? t.perfectScore : t.results}
                   </h4>
                   <p style={{
                     margin: '0',
                     fontSize: 'clamp(0.8rem, 2.5vw, 1rem)',
                     color: score === topics[selectedTopic].parts.length ? '#155724' : '#856404'
                   }}>
-                    You identified <strong>{score}</strong> out of <strong>{topics[selectedTopic].parts.length}</strong> parts correctly!
+                    {t.resultsText} <strong>{score}</strong> {t.outOf} <strong>{topics[selectedTopic].parts.length}</strong> {t.partsCorrectly}
                   </p>
                 </div>
               )}
@@ -731,7 +919,7 @@ const PartsMarkingGame = () => {
                     }
                   }}
                 >
-                  {showAnswers ? 'Results Shown' : 'Check Answers'}
+                  {showAnswers ? t.resultsShown : t.checkAnswers}
                 </button>
 
                 <button
@@ -753,7 +941,7 @@ const PartsMarkingGame = () => {
                     e.target.style.backgroundColor = '#6c757d';
                   }}
                 >
-                  Reset Game
+                  {t.resetGame}
                 </button>
               </div>
             </div>
@@ -772,7 +960,7 @@ const PartsMarkingGame = () => {
                 color: '#2c3e50',
                 fontSize: 'clamp(1rem, 3vw, 1.3rem)'
               }}>
-                📚 Answer Key - All {topics[selectedTopic].title} Parts
+                {t.answerKey} {topics[selectedTopic].title} {t.allParts}
               </h3>
               
               <div style={{
@@ -795,7 +983,7 @@ const PartsMarkingGame = () => {
                       fontWeight: '500',
                       color: selectedParts.has(part) ? '#155724' : '#495057'
                     }}>
-                      {index + 1}. {part}
+                      {index + 1}. {t.parts[part] || part}
                     </span>
                     {selectedParts.has(part) && (
                       <span style={{marginLeft: '8px', color: '#28a745'}}>✓</span>

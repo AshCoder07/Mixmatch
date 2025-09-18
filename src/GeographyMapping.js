@@ -745,28 +745,29 @@ const getCurrentMapConfig = useCallback(() => {
           }}>
             Question Details:
           </h3>
-          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-            {gameResults.map((result, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '10px',
-                margin: '5px 0',
-                borderRadius: '8px',
-                background: result.correct ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
-                border: result.correct ? '1px solid rgba(76, 175, 80, 0.3)' : '1px solid rgba(244, 67, 54, 0.3)',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-              }}>
-               <span style={{ fontWeight: 'bold' }}>
-  {result.correct ? '✅' : '❌'} {result.questionDisplay || result.question}
-</span>
-                <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', opacity: '0.8' }}>
-                  {result.timeTaken}s
-                </span>
-              </div>
-            ))}
-          </div>
+        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+  {gameResults.map((result, index) => (
+    <div key={index} style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '10px',
+      margin: '5px 0',
+      borderRadius: '8px',
+      background: result.correct ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
+      border: result.correct ? '1px solid rgba(76, 175, 80, 0.3)' : '1px solid rgba(244, 67, 54, 0.3)',
+      fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+    }}>
+      <span style={{ fontWeight: 'bold' }}>
+        {result.correct ? '✅' : '❌'} {language === 'tamil' && result.questionDisplay ? result.questionDisplay : result.question}
+      </span>
+      <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', opacity: '0.8' }}>
+        {result.timeTaken}s
+      </span>
+    </div>
+  ))}
+</div>
+         
         </div>
 
         <button
