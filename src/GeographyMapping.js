@@ -49,7 +49,6 @@ const worldPoints = [
   { name: "South Africa", tamil: "தென்னாப்பிரிக்கா", top: "78%", left: "52%" },
   { name: "Egypt", tamil: "எகிப்து", top: "48%", left: "48%" }
 ];
-
 const GeographyGame = () => {
   const { user, saveScore } = useUser();
   const [currentMap, setCurrentMap] = useState('india');
@@ -69,6 +68,7 @@ const GeographyGame = () => {
     rating: 0
   });
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(false); // NEW: Track if current question is answered
 
   // Use refs for performance optimization
   const timerRef = useRef(null);
@@ -80,32 +80,33 @@ const GeographyGame = () => {
     tamilnadu: {
       name: { english: "Tamil Nadu Map", tamil: "தமிழ்நாடு வரைபடம்" },
       points: tamilNaduPoints,
-        bgImage: `url(${TamilNaduMap})`,
+      bgImage: `url(${TamilNaduMap})`,
       bgColor: "#ff9a9e"
     },
     india: {
       name: { english: "India Map", tamil: "இந்தியா வரைபடம்" },
       points: indiaPoints,
-        bgImage: `url(${IndiaMap})`,
+      bgImage: `url(${IndiaMap})`,
       bgColor: "#a8edea"
     },
     rivers: {
       name: { english: "Indian Rivers Map", tamil: "இந்திய நதிகள் வரைபடம்" },
       points: riverPoints,
-        bgImage: `url(${IndianRiverMap})`,
+      bgImage: `url(${IndianRiverMap})`,
       bgColor: "#d299c2"
     },
     world: {
       name: { english: "World Map", tamil: "உலக வரைபடம்" },
       points: worldPoints,
-        bgImage: `url(${WorldMap})`,
+      bgImage: `url(${WorldMap})`,
       bgColor: "#89f7fe"
     }
   }), []);
+
   // Safe getter for current map config
-const getCurrentMapConfig = useCallback(() => {
-  return mapConfigs[currentMap] || mapConfigs.india;
-}, [mapConfigs, currentMap]);
+  const getCurrentMapConfig = useCallback(() => {
+    return mapConfigs[currentMap] || mapConfigs.india;
+  }, [mapConfigs, currentMap]);
 
   const texts = useMemo(() => ({
     english: {
@@ -214,28 +215,28 @@ const getCurrentMapConfig = useCallback(() => {
     
     notificationRef.current = setTimeout(() => {
       setNotification(null);
-    }, 2500); // Reduced timeout for better performance
+    }, 2500);
   }, []);
 
   // Simplified start game function
- const startGame = useCallback((mapKey) => {
-  // Validate map key
-  if (!mapConfigs[mapKey]) {
-    console.warn(`Invalid map key: ${mapKey}, defaulting to india`);
-    mapKey = 'india';
-  }
-  
-  setCurrentMap(mapKey);
-  setGameState('playing');
-  setCurrentQuestionIndex(0);
-  setScore(0);
-  setTimeLeft(40);
-  setPlacedMarkers([]);
-  setGameResults([]);
-  
-  // Start timer after state updates
-  setTimeout(() => startTimer(), 100);
-}, [mapConfigs]);
+  const startGame = useCallback((mapKey) => {
+    if (!mapConfigs[mapKey]) {
+      console.warn(`Invalid map key: ${mapKey}, defaulting to india`);
+      mapKey = 'india';
+    }
+    
+    setCurrentMap(mapKey);
+    setGameState('playing');
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setTimeLeft(40);
+    setPlacedMarkers([]);
+    setGameResults([]);
+    setIsAnswered(false); // NEW: Reset answer state
+    
+    // Start timer after state updates
+    setTimeout(() => startTimer(), 100);
+  }, []);
 
   // Timer functions
   const startTimer = useCallback(() => {
@@ -260,44 +261,48 @@ const getCurrentMapConfig = useCallback(() => {
     }
   }, []);
 
+  // FIXED: Time up function that only records result once
   const timeUp = useCallback(() => {
-  stopTimer();
-  const currentMapConfig = getCurrentMapConfig();
-  const currentPoint = currentMapConfig.points[currentQuestionIndex];
-  
-  // Add safety check for currentPoint
-  if (currentPoint) {
-    setGameResults(prev => [...prev, {
-  question: currentPoint.name,
-  questionDisplay: currentPoint[language] || currentPoint.name,
-  correct: false,
-  timeTaken: 40
-}]);
-    showNotification(texts[language].incorrect, 'error');
-  }
+    if (isAnswered) return; // Prevent duplicate entries
+    
+    stopTimer();
+    const currentMapConfig = getCurrentMapConfig();
+    const currentPoint = currentMapConfig.points[currentQuestionIndex];
+    
+    if (currentPoint) {
+      setGameResults(prev => [...prev, {
+        question: currentPoint.name,
+        questionDisplay: currentPoint[language] || currentPoint.name,
+        correct: false,
+        timeTaken: 40
+      }]);
+      setIsAnswered(true); // Mark as answered
+      showNotification(texts[language].incorrect, 'error');
+    }
     
     setTimeout(() => {
       nextQuestion();
-    }, 1000); // Reduced timeout
-  }, [currentMap, currentQuestionIndex, language, mapConfigs, texts, stopTimer, showNotification]);
+    }, 1000);
+  }, [currentMap, currentQuestionIndex, language, mapConfigs, texts, stopTimer, showNotification, isAnswered, getCurrentMapConfig]);
 
-  // Optimized check answer function
+  // FIXED: Check answer function that only records result once
   const checkAnswer = useCallback((clickX, clickY) => {
-  const currentMapConfig = getCurrentMapConfig();
-  const currentPoint = currentMapConfig.points[currentQuestionIndex];
-  
-  // Add comprehensive safety checks
-  if (!currentPoint || !currentPoint.left || !currentPoint.top) {
-    console.warn('Invalid currentPoint:', currentPoint, 'at index:', currentQuestionIndex);
-    return;
-  }
-  
-  const mapElement = mapElementRef.current;
-  if (!mapElement) return;
-  
-  const rect = mapElement.getBoundingClientRect();
-  const targetX = (parseFloat(currentPoint.left) / 100) * rect.width;
-  const targetY = (parseFloat(currentPoint.top) / 100) * rect.height;
+    if (isAnswered) return; // Prevent multiple answers for same question
+    
+    const currentMapConfig = getCurrentMapConfig();
+    const currentPoint = currentMapConfig.points[currentQuestionIndex];
+    
+    if (!currentPoint || !currentPoint.left || !currentPoint.top) {
+      console.warn('Invalid currentPoint:', currentPoint, 'at index:', currentQuestionIndex);
+      return;
+    }
+    
+    const mapElement = mapElementRef.current;
+    if (!mapElement) return;
+    
+    const rect = mapElement.getBoundingClientRect();
+    const targetX = (parseFloat(currentPoint.left) / 100) * rect.width;
+    const targetY = (parseFloat(currentPoint.top) / 100) * rect.height;
     
     // Calculate distance with tolerance
     const distance = Math.sqrt(
@@ -306,7 +311,7 @@ const getCurrentMapConfig = useCallback(() => {
     
     // Responsive tolerance based on screen size
     const baseSize = Math.min(rect.width, rect.height);
-    const tolerance = Math.max(baseSize * 0.08, 30); // Minimum 30px tolerance for touch devices
+    const tolerance = Math.max(baseSize * 0.08, 30);
     const isCorrect = distance <= tolerance;
     const timeTaken = 40 - timeLeft;
      
@@ -325,40 +330,41 @@ const getCurrentMapConfig = useCallback(() => {
       showNotification(texts[language].incorrect, 'error');
     }
     
-    // Record the result
-   setGameResults(prev => [...prev, {
-  question: currentPoint.name,
-  questionDisplay: currentPoint[language] || currentPoint.name,
-  correct: isCorrect,
-  timeTaken: timeTaken
-}]);
+    // Record the result ONLY ONCE
+    setGameResults(prev => [...prev, {
+      question: currentPoint.name,
+      questionDisplay: currentPoint[language] || currentPoint.name,
+      correct: isCorrect,
+      timeTaken: timeTaken
+    }]);
 
+    setIsAnswered(true); // Mark as answered
     stopTimer();
     
     setTimeout(() => {
       nextQuestion();
-    }, 1000); // Reduced timeout
-  }, [currentMap, currentQuestionIndex, timeLeft, mapConfigs, language, texts, showNotification, stopTimer]);
+    }, 1000);
+  }, [currentMap, currentQuestionIndex, timeLeft, mapConfigs, language, texts, showNotification, stopTimer, isAnswered, getCurrentMapConfig]);
 
   // Next question function
   const nextQuestion = useCallback(() => {
-  const currentMapConfig = getCurrentMapConfig();
-  const totalQuestions = currentMapConfig.points.length;
-  
-  if (currentQuestionIndex + 1 >= totalQuestions) {
-    endGame();
-  } else {
-    const nextIndex = currentQuestionIndex + 1;
-    // Ensure the next question exists
-    if (nextIndex < currentMapConfig.points.length && currentMapConfig.points[nextIndex]) {
-      setCurrentQuestionIndex(nextIndex);
-      setTimeLeft(40);
-      startTimer();
-    } else {
+    const currentMapConfig = getCurrentMapConfig();
+    const totalQuestions = currentMapConfig.points.length;
+    
+    if (currentQuestionIndex + 1 >= totalQuestions) {
       endGame();
+    } else {
+      const nextIndex = currentQuestionIndex + 1;
+      if (nextIndex < currentMapConfig.points.length && currentMapConfig.points[nextIndex]) {
+        setCurrentQuestionIndex(nextIndex);
+        setTimeLeft(40);
+        setIsAnswered(false); // NEW: Reset answer state for next question
+        startTimer();
+      } else {
+        endGame();
+      }
     }
-  }
-}, [currentQuestionIndex, getCurrentMapConfig, startTimer]);
+  }, [currentQuestionIndex, getCurrentMapConfig, startTimer]);
 
   // End game function
   const endGame = useCallback(() => {
@@ -385,6 +391,7 @@ const getCurrentMapConfig = useCallback(() => {
     setShowReport(false);
     setShowFeedbackForm(false);
     setNotification(null);
+    setIsAnswered(false); // NEW: Reset answer state
   }, [stopTimer]);
 
   // Back to levels function
@@ -392,14 +399,13 @@ const getCurrentMapConfig = useCallback(() => {
     resetGame();
   }, [resetGame]);
 
-  // Optimized map click handler with touch support
+  // FIXED: Map click handler that checks if already answered
   const handleMapClick = useCallback((e) => {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || isAnswered) return; // Prevent clicking after answer
     
     e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
     
-    // Handle both mouse and touch events
     const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     
@@ -407,15 +413,15 @@ const getCurrentMapConfig = useCallback(() => {
     const clickY = clientY - rect.top;
     
     checkAnswer(clickX, clickY);
-  }, [gameState, checkAnswer]);
+  }, [gameState, checkAnswer, isAnswered]);
 
   // Handle touch events
   const handleTouchStart = useCallback((e) => {
     e.preventDefault();
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && !isAnswered) {
       handleMapClick(e);
     }
-  }, [gameState, handleMapClick]);
+  }, [gameState, handleMapClick, isAnswered]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -426,7 +432,6 @@ const getCurrentMapConfig = useCallback(() => {
       }
     };
   }, [stopTimer]);
-
   // Responsive styles
   const getResponsiveStyles = () => {
     const isSmallScreen = window.innerWidth < 768;
@@ -470,7 +475,7 @@ const getCurrentMapConfig = useCallback(() => {
         borderRadius: isViewboard ? '15px' : '10px',
         border: '2px solid rgba(255,255,255,0.3)',
         boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
-        cursor: 'pointer',
+        cursor: isAnswered ? 'default' : 'pointer', // Change cursor when answered
         touchAction: 'manipulation'
       }
     };
@@ -627,7 +632,7 @@ const getCurrentMapConfig = useCallback(() => {
       performanceLevel = texts[language].needsImprovement;
     }
 
-    // Student Report Component
+    // FIXED: Student Report Component - ensures no duplicates
     const StudentReport = () => (
       <div style={{
         background: 'rgba(255,255,255,0.95)',
@@ -647,7 +652,8 @@ const getCurrentMapConfig = useCallback(() => {
           paddingBottom: '10px'
         }}>
           📊 {texts[language].participationReport}
-        </h2><div style={{ 
+        </h2>
+        <div style={{ 
           marginBottom: '20px', 
           textAlign: 'center',
           fontSize: 'clamp(1rem, 3vw, 1.2rem)'
@@ -745,29 +751,28 @@ const getCurrentMapConfig = useCallback(() => {
           }}>
             Question Details:
           </h3>
-        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-  {gameResults.map((result, index) => (
-    <div key={index} style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '10px',
-      margin: '5px 0',
-      borderRadius: '8px',
-      background: result.correct ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
-      border: result.correct ? '1px solid rgba(76, 175, 80, 0.3)' : '1px solid rgba(244, 67, 54, 0.3)',
-      fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-    }}>
-      <span style={{ fontWeight: 'bold' }}>
-        {result.correct ? '✅' : '❌'} {language === 'tamil' && result.questionDisplay ? result.questionDisplay : result.question}
-      </span>
-      <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', opacity: '0.8' }}>
-        {result.timeTaken}s
-      </span>
-    </div>
-  ))}
-</div>
-         
+          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {gameResults.map((result, index) => (
+              <div key={`${result.question}-${index}`} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '10px',
+                margin: '5px 0',
+                borderRadius: '8px',
+                background: result.correct ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
+                border: result.correct ? '1px solid rgba(76, 175, 80, 0.3)' : '1px solid rgba(244, 67, 54, 0.3)',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+              }}>
+                <span style={{ fontWeight: 'bold' }}>
+                  {result.correct ? '✅' : '❌'} {language === 'tamil' && result.questionDisplay ? result.questionDisplay : result.question}
+                </span>
+                <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', opacity: '0.8' }}>
+                  {result.timeTaken}s
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button
@@ -937,15 +942,16 @@ const getCurrentMapConfig = useCallback(() => {
     );
   }
 
-  // Playing Screen
-  // Get current map config safely
-// Get current map config safely
-const currentMapConfig = getCurrentMapConfig();
-const currentPoint = (currentMapConfig.points && currentMapConfig.points[currentQuestionIndex]) 
-  ? currentMapConfig.points[currentQuestionIndex] 
-  : (currentMapConfig.points && currentMapConfig.points[0]) 
-  ? currentMapConfig.points[0] 
-  : { name: "Loading...", tamil: "ஏற்றுகிறது...", left: "50%", top: "50%" };
+  // Playing Screen - Get current map config safely
+  const currentMapConfig = getCurrentMapConfig();
+  const currentPoint = (currentMapConfig.points && currentMapConfig.points[currentQuestionIndex]) 
+    ? currentMapConfig.points[currentQuestionIndex] 
+    : (currentMapConfig.points && currentMapConfig.points[0]) 
+    ? currentMapConfig.points[0] 
+    : { name: "Loading...", tamil: "ஏற்றுகிறது...", left: "50%", top: "50%" };
+
+  const mapAreaBackground = `linear-gradient(135deg, ${currentMapConfig.bgColor} 0%, rgba(255,255,255,0.1) 100%)`;
+
   return (
     <ScrollableContainer>
       <div style={styles.container}>
@@ -1238,7 +1244,7 @@ const currentPoint = (currentMapConfig.points && currentMapConfig.points[current
                 marginBottom: '8px'
               }}>
                 <div style={{
-                  width: `${((currentQuestionIndex) / mapConfigs[currentMap].points.length) * 100}%`,
+                  width: `${((currentQuestionIndex) / currentMapConfig.points.length) * 100}%`,
                   height: '100%',
                   background: '#4CAF50',
                   transition: 'width 0.3s ease'
@@ -1257,7 +1263,7 @@ const currentPoint = (currentMapConfig.points && currentMapConfig.points[current
           {/* Map Area */}
           <div style={{
             ...styles.mapArea,
-            background: `linear-gradient(135deg, ${currentMapConfig.bgColor} 0%, rgba(255,255,255,0.1) 100%)`
+            background: mapAreaBackground
           }}>
             <div 
               ref={mapElementRef}
@@ -1272,6 +1278,25 @@ const currentPoint = (currentMapConfig.points && currentMapConfig.points[current
                 position: 'relative'
               }}
             >
+              {/* Answer feedback overlay */}
+              {isAnswered && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 'inherit',
+                  pointerEvents: 'none',
+                  zIndex: 5
+                }}
+              />
+              )}
+              
               {/* Placed Markers */}
               {placedMarkers.map((marker, index) => (
                 <div

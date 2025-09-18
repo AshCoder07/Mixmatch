@@ -125,7 +125,7 @@ const translations = {
     teamMembers: "குழு உறுப்பினர்கள்: 2023-2027 ",
     mentor: "வழிகாட்டி:",
     nikhita: "தரிகோபுல நிகிதா - III/CSE",
-    sheeba: "ஷீபா ஷெர்லின் எஸ் - III/CSE",
+    sheeba: "ஷீபா ஷெர்லின் சா - III/CSE",
     mentorName: "எம் பி கார்த்திகேயன் - இணை பேராசிரியர்/CSE",
     backToMenu: "← மெனுவுக்குத் திரும்பு",
     languageToggle: "English",
