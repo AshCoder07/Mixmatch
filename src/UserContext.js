@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import SessionTimeout from './utils/sessionTimeout';
+import { navigateToHome } from './utils/navigationHelper';
 
 const UserContext = createContext();
 
@@ -42,6 +43,9 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('lastActivity');
+    
+    // Clear any cached route information
+    sessionStorage.clear();
   }, []);
 
   // Session timeout effect - start/stop based on user login status
@@ -51,8 +55,12 @@ export const UserProvider = ({ children }) => {
       sessionTimeoutRef.current = new SessionTimeout(
         2 * 60 * 1000, // 2 minutes timeout
         () => {
-          // On timeout, automatically logout without popup (mobile-friendly)
+          // On timeout, logout and navigate to home page
           logout();
+          // Navigate to home page after logout
+          setTimeout(() => {
+            navigateToHome();
+          }, 100); // Small delay to ensure logout is processed
         },
         { silentMode: true } // Reduce console logs for production/mobile app
       );
@@ -89,6 +97,11 @@ export const UserProvider = ({ children }) => {
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     allUsers.push(newUser);
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
+    
+    // Always navigate to home page after login (especially after session timeout)
+    setTimeout(() => {
+      navigateToHome();
+    }, 100);
     
     return newUser;
   }, []);

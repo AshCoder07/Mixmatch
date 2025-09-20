@@ -16,6 +16,7 @@ import {
   Route,
   Link,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import "./App.css";
 import { UserProvider, useUser } from "./UserContext";
@@ -23,6 +24,7 @@ import UserEntry from "./UserEntry";
 
 // Import session timeout test utilities for development
 import "./utils/sessionTimeoutTest";
+import { setNavigationFunction } from "./utils/navigationHelper";
 
 // Lazy load all game components - This will dramatically reduce initial bundle size
 const MathQuiz = lazy(() => import("./MathQuiz"));
@@ -325,6 +327,12 @@ const Home = memo(() => (
 const AppRoutes = () => {
   const { user } = useUser();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Set up navigation function for session timeout
+  useEffect(() => {
+    setNavigationFunction(navigate);
+  }, [navigate]);
 
   if (!user) {
     return <UserEntry />;
