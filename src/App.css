@@ -17,6 +17,12 @@
   --border-radius: 8px;
   --border-radius-lg: 12px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Fixed dimensions for game icons */
+  --game-icon-width: 180px;
+  --game-icon-height: 160px;
+  --game-emoji-size: 3.5rem;
+  --game-title-size: 1rem;
 }
 
 * {
@@ -248,7 +254,7 @@ body {
   gap: 0.4rem;
 }
 
-/* Game Grid - Single Line Layout */
+/* Game Grid - FIXED DIMENSIONS */
 .games-section {
   padding: 2rem 1.5rem;
   max-width: 1400px;
@@ -267,8 +273,9 @@ body {
 
 .games-grid .game-icon-container {
   flex: 0 0 auto;
-  min-width: 180px;
-  max-width: 200px;
+  min-width: var(--game-icon-width) !important;
+  max-width: var(--game-icon-width) !important;
+  width: var(--game-icon-width) !important;
 }
 
 .game-icon-container {
@@ -276,26 +283,30 @@ body {
   display: flex;
   flex-direction: column;
   transition: var(--transition);
-  width: 180px;
-  max-width: 200px;
+  width: var(--game-icon-width) !important;
+  min-width: var(--game-icon-width) !important;
+  max-width: var(--game-icon-width) !important;
 }
 
 .game-icon {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.98) !important;
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--border-radius-lg);
-  padding: 1.2rem 1rem;
+  padding: 1.2rem 1rem !important;
   text-align: center;
   transition: var(--transition);
   box-shadow: 0 4px 20px rgba(102, 102, 241, 0.15);
   position: relative;
   overflow: hidden;
-  height: 160px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: var(--game-icon-height) !important;
+  min-height: var(--game-icon-height) !important;
+  max-height: var(--game-icon-height) !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
   cursor: pointer;
   flex: 1;
 }
@@ -318,17 +329,20 @@ body {
 .game-icon:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 12px 32px rgba(102, 102, 241, 0.25);
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 1) !important;
   border-color: var(--primary-purple);
 }
 
 .game-icon span {
-  font-size: 3.5rem;
-  margin-bottom: 0.8rem;
-  display: block;
+  font-size: var(--game-emoji-size) !important;
+  margin-bottom: 0.8rem !important;
+  display: block !important;
   filter: drop-shadow(0 2px 8px rgba(102, 102, 241, 0.2));
   transition: var(--transition);
-  line-height: 1;
+  line-height: 1 !important;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', sans-serif !important;
+  -webkit-font-feature-settings: 'liga' off;
+  font-feature-settings: 'liga' off;
 }
 
 .game-icon:hover span {
@@ -337,19 +351,21 @@ body {
 }
 
 .game-icon h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--primary-purple);
-  margin: 0;
+  font-size: var(--game-title-size) !important;
+  font-weight: 700 !important;
+  color: var(--primary-purple) !important;
+  margin: 0 !important;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  line-height: 1.2;
+  line-height: 1.2 !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: var(--transition);
+  width: 100% !important;
+  text-align: center !important;
 }
 
 .game-icon:hover h3 {
-  color: var(--secondary-purple);
+  color: var(--secondary-purple) !important;
   transform: translateY(-1px);
   text-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
 }
@@ -454,19 +470,28 @@ body {
   z-index: 1;
 }
 
-/* Responsive Design - Single Line */
+/* Responsive Design with FIXED SIZES */
 @media (max-width: 1024px) {
-  .games-grid {
-    gap: 1rem;
+  :root {
+    --game-icon-width: 160px;
+    --game-icon-height: 140px;
+    --game-emoji-size: 3.2rem;
+    --game-title-size: 0.95rem;
   }
   
-  .games-grid .game-icon-container {
-    min-width: 160px;
-    max-width: 180px;
+  .games-grid {
+    gap: 1rem;
   }
 }
 
 @media (max-width: 768px) {
+  :root {
+    --game-icon-width: 140px;
+    --game-icon-height: 130px;
+    --game-emoji-size: 3rem;
+    --game-title-size: 0.9rem;
+  }
+  
   .extra-header {
     flex-direction: column;
     gap: 0.8rem;
@@ -484,25 +509,14 @@ body {
   .games-grid {
     gap: 0.8rem;
     padding: 0 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .games-grid .game-icon-container {
-    min-width: 140px;
-    max-width: 160px;
-  }
-  
-  .game-icon {
-    height: 140px;
-    padding: 1rem 0.8rem;
-  }
-  
-  .game-icon span {
-    font-size: 3rem;
-    margin-bottom: 0.6rem;
-  }
-  
-  .game-icon h3 {
-    font-size: 0.9rem;
+    flex: 1 1 calc(50% - 0.4rem);
+    min-width: var(--game-icon-width) !important;
+    max-width: var(--game-icon-width) !important;
   }
   
   .team-grid {
@@ -530,6 +544,13 @@ body {
 }
 
 @media (max-width: 640px) {
+  :root {
+    --game-icon-width: 120px;
+    --game-icon-height: 120px;
+    --game-emoji-size: 2.8rem;
+    --game-title-size: 0.8rem;
+  }
+  
   .games-section {
     padding: 1.5rem 0.5rem;
   }
@@ -537,26 +558,6 @@ body {
   .games-grid {
     gap: 0.6rem;
     padding: 0 0.3rem;
-  }
-  
-  .games-grid .game-icon-container {
-    min-width: 120px;
-    max-width: 140px;
-  }
-  
-  .game-icon {
-    padding: 1rem 0.6rem;
-    height: 130px;
-  }
-  
-  .game-icon span {
-    font-size: 2.8rem;
-    margin-bottom: 0.6rem;
-  }
-  
-  .game-icon h3 {
-    font-size: 0.8rem;
-    letter-spacing: 0.4px;
   }
   
   .team-members-section {
@@ -627,22 +628,22 @@ body {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
-}/* Add this to ensure emojis render properly */
-.game-icon span {
-  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', sans-serif !important;
-  -webkit-font-feature-settings: 'liga' off;
-  font-feature-settings: 'liga' off;
 }
 
-/* Make games grid responsive */
-.games-grid {
-  flex-wrap: wrap;
-  justify-content: center;
+/* CRITICAL: Prevent any external CSS from overriding game icon styles */
+.games-grid .game-icon-container,
+.games-grid .game-icon-container .game-icon,
+.games-grid .game-icon-container .game-icon span,
+.games-grid .game-icon-container .game-icon h3 {
+  box-sizing: border-box !important;
 }
 
-@media (max-width: 768px) {
-  .games-grid .game-icon-container {
-    flex: 1 1 calc(50% - 0.5rem);
-    min-width: 140px;
-  }
+/* Ensure consistent styling regardless of page navigation */
+.game-icon-container * {
+  box-sizing: border-box;
+}
+
+/* Force recalculation on navigation */
+.games-section {
+  contain: layout style;
 }
