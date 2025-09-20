@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import SessionTimeout from './utils/sessionTimeout';
 
 const UserContext = createContext();
 
@@ -12,6 +13,7 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const sessionTimeoutRef = useRef(null);
 
   // Load user from localStorage on component mount
   useEffect(() => {
@@ -30,7 +32,47 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = (name, school) => {
+  const logout = useCallback(() => {
+    // Stop session timeout
+    if (sessionTimeoutRef.current) {
+      sessionTimeoutRef.current.stop();
+      sessionTimeoutRef.current = null;
+    }
+    
+    setUser(null);
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('lastActivity');
+  }, []);
+
+  // Session timeout effect - start/stop based on user login status
+  useEffect(() => {
+    if (user && !sessionTimeoutRef.current) {
+      // User is logged in, start session timeout
+      sessionTimeoutRef.current = new SessionTimeout(
+        2 * 60 * 1000, // 2 minutes timeout
+        () => {
+          // On timeout, automatically logout without popup (mobile-friendly)
+          logout();
+        },
+        { silentMode: true } // Reduce console logs for production/mobile app
+      );
+      sessionTimeoutRef.current.start();
+    } else if (!user && sessionTimeoutRef.current) {
+      // User logged out, stop session timeout
+      sessionTimeoutRef.current.stop();
+      sessionTimeoutRef.current = null;
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (sessionTimeoutRef.current) {
+        sessionTimeoutRef.current.destroy();
+        sessionTimeoutRef.current = null;
+      }
+    };
+  }, [user, logout]);
+
+  const login = useCallback((name, school) => {
     const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newUser = {
       id: userId,
@@ -49,12 +91,7 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
     
     return newUser;
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('currentUser');
-  };
+  }, []);
 
   const addScore = (gameType, score, maxScore = 100, timeTaken = null, difficulty = 'normal') => {
     if (!user) return;
