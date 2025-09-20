@@ -22,6 +22,9 @@ import { UserProvider, useUser } from "./UserContext";
 import UserEntry from "./UserEntry";
 import ScrollableContainer from "./Scroll";
 
+// Import session timeout test utilities for development
+import "./utils/sessionTimeoutTest";
+
 // Lazy load all game components - This will dramatically reduce initial bundle size
 const MathQuiz = lazy(() => import("./MathQuiz"));
 const GFGWordGame = lazy(() => import("./GFGWordGame"));
