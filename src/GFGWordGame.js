@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 // Simple translations
 const translations = {
   en: {
-    title: "Word Guessing Game",
+    title: "Chemistry Word Guessing Game",
     languageButton: "Switch to தமிழ்",
     selectLevel: "Choose Difficulty Level",
     beginner: "Beginner Level",
@@ -33,7 +33,7 @@ const translations = {
      tooManyWrongGuesses: "Too many wrong guesses! Game over!"
   },
   ta: {
-    title: "சொல் அறிதல் விளையாட்டு",
+    title: "வேதியியல் சொல் அறிதல் விளையாட்டு",
     languageButton: "Switch to English",
     selectLevel: "சிரமத்தை தேர்ந்தெடுக்கவும்",
     beginner: "ஆரம்ப நிலை",

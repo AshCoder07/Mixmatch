@@ -1224,23 +1224,24 @@ const ScienceQuiz = memo(() => {
   };
 
   // FIXED: Proper score saving function
- const saveGameScore = () => {
-    if (!user || !questions.length) return;
+const saveGameScore = () => {
+  if (!user || !questions.length || !gameStartTime) return;
 
-    const endTime = Date.now();
-    const timeTakenSeconds = Math.round((endTime - gameStartTime) / 1000);
-    const maxPossibleScore = questions.length * 4; // 4 matches per question
-    
-    // Use the addScore method from UserContext (not saveScore)
-    addScore(
-      'scienceQuiz',           // gameType - FIXED: changed from 'mathQuiz' to 'scienceQuiz'
-      score,                   // current score
-      maxPossibleScore,        // max possible score
-      timeTakenSeconds,        // time taken in seconds
-      selectedLevel || 'level1' // difficulty level
-    );
-  };
-
+  const endTime = Date.now();
+  const timeTakenSeconds = Math.round((endTime - gameStartTime) / 1000);
+  const maxPossibleScore = questions.length * 4; // 4 matches per question
+  
+  // Use the addScore method from UserContext
+  addScore(
+    'scienceQuiz',           // gameType - make sure this matches your UserScores gameTypes
+    score,                   // current score
+    maxPossibleScore,        // max possible score
+    timeTakenSeconds,        // time taken in seconds
+    selectedLevel || 'level1' // difficulty level
+  );
+  
+  console.log('Score saved:', { gameType: 'scienceQuiz', score, maxPossibleScore, timeTakenSeconds, level: selectedLevel });
+};
   const handleTimeUp = () => {
     checkAnswer();
   };
@@ -1350,27 +1351,37 @@ const ScienceQuiz = memo(() => {
       setTimeout(() => setShowConfetti(false), 1500);
     }
 
-    setScore(prev => prev + correctCount);
-
+   setScore(prev => {
+  const newScore = prev + correctCount;
+  
+  // If this is the last question, save the score after state update
+  if (currentQuestionIndex >= questions.length - 1) {
     setTimeout(() => {
-      if (currentQuestionIndex < questions.length - 1) {
-        // Clear all user inputs first
-        setMatches({});
-        setSelectedLeft(null);
-        setFeedback({});
-        setShowResults(false);
-        
-        // Then move to next question after a small delay
-        setTimeout(() => {
-          setCurrentQuestionIndex(prev => prev + 1);
-          setTimeLeft(40);
-        }, 100);
-      } else {
-        // Game completed - save score before showing results
-        saveGameScore();
-        setGameState('results');
-      }
-    }, 1500);
+      saveGameScore();
+    }, 100);
+  }
+  
+  return newScore;
+});
+
+setTimeout(() => {
+  if (currentQuestionIndex < questions.length - 1) {
+    // Clear all user inputs first
+    setMatches({});
+    setSelectedLeft(null);
+    setFeedback({});
+    setShowResults(false);
+    
+    // Then move to next question after a small delay
+    setTimeout(() => {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setTimeLeft(40);
+    }, 100);
+  } else {
+    // Game completed
+    setGameState('results');
+  }
+}, 1500);
   };
   const resetGame = () => {
     setGameState('menu');
@@ -1530,17 +1541,7 @@ const ScienceQuiz = memo(() => {
                           {feedbackType === 'correct' ? '✓' : '✗'}
                         </span>
                       )}
-                      {!showResults && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeMatch(item);
-                          }}
-                          className="remove-btn"
-                        >
-                          ×
-                        </button>
-                      )}
+                      
                     </div>
                   )}
                 </div>
@@ -1567,7 +1568,8 @@ const ScienceQuiz = memo(() => {
           ))}
         </div>
       </div>
-
+<br></br>
+<br></br>
       <div className="action-buttons">
         {!showResults && (
           <>

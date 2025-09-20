@@ -20,7 +20,6 @@ import {
 import "./App.css";
 import { UserProvider, useUser } from "./UserContext";
 import UserEntry from "./UserEntry";
-import ScrollableContainer from "./Scroll";
 
 // Import session timeout test utilities for development
 import "./utils/sessionTimeoutTest";
@@ -98,7 +97,7 @@ const translations = {
     scienceQuiz: "Science Quiz",
     geographyMapping: "Geography Mapping",
     partsMarkingGame: "Parts Marking Game",
-    wordGuessGame: "Word Guess Game",
+    wordGuessGame: "Chemistry Word Guess Game",
     mathQuiz: "Math Quiz",
     teamMembers: "Team Members: 2023-2027 ",
     mentor: "Mentor:",
@@ -123,7 +122,7 @@ const translations = {
     scienceQuiz: "அறிவியல் வினாடி வினா",
     geographyMapping: "புவியியல் வரைபடம்",
     partsMarkingGame: "பாகங்கள் அடையாளம் காணும் விளையாட்டு",
-    wordGuessGame: "சொல் அறிதல் விளையாட்டு",
+    wordGuessGame: "வேதியியல் சொல் அறிதல் விளையாட்டு",
     mathQuiz: "கணித வினாடி வினா",
     teamMembers: "குழு உறுப்பினர்கள்: 2023-2027 ",
     mentor: "வழிகாட்டி:",
@@ -309,20 +308,23 @@ const TeamMembersSection = memo(() => {
   );
 });
 
+// Updated Home component with content wrapper for no-scroll layout
 const Home = memo(() => (
   <div className="main-container">
     <EnhancedHeader />
-    <div className="games-section">
-      <GameSelection />
+    <div className="content-wrapper">
+      <div className="games-section">
+        <GameSelection />
+      </div>
+      <TeamMembersSection />
     </div>
-    <TeamMembersSection />
-    <ScrollableContainer />
   </div>
 ));
 
 /* ---------------- ROUTES ---------------- */
 const AppRoutes = () => {
   const { user } = useUser();
+  const location = useLocation();
 
   if (!user) {
     return <UserEntry />;
@@ -337,13 +339,14 @@ const AppRoutes = () => {
           <Route path="/mathQuiz" element={<MathQuiz />} />
           <Route path="/wordGame" element={<GFGWordGame />} />
           <Route path="/scienceQuiz" element={<ScienceQuiz />} />
-
           <Route path="/GeographyMapping" element={<GeographyMappping />} />
           <Route path="/my-scores" element={<UserScores />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/partsMarkingGame" element={<PartsMarkingGame />} />
         </Routes>
       </Suspense>
+      {/* Show Footer only on non-home pages */}
+      {location.pathname !== "/" && <Footer />}
     </>
   );
 };
@@ -356,7 +359,6 @@ function App() {
         <Router>
           <div className="min-h-screen app-bg">
             <AppRoutes />
-            <Footer />
           </div>
         </Router>
       </LanguageProvider>
