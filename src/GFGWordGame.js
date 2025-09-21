@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useUser } from './UserContext';
 
 // Simple translations
 const translations = {
@@ -175,6 +176,8 @@ const generateRandomQuestions = (level) => {
 
 // Main component
 const WordGame = memo(() => {
+  const { user, addScore } = useUser();
+  
   const [language, setLanguage] = useState("en");
   const [currentLevel, setCurrentLevel] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("home"); // home, game, results
@@ -346,8 +349,31 @@ const useHint = () => {
       const endTime = Date.now();
       const timeTakenInSeconds = Math.round((endTime - gameStartTime) / 1000);
       setTotalGameTime(timeTakenInSeconds);
+      
+      // Save score to main scoring system
+      if (user && randomQuestions.length > 0) {
+        const maxPossibleScore = randomQuestions.length * 10; // 10 points per question max
+        const difficultyLevel = currentLevel === 'beginner' ? 'easy' : 
+                               currentLevel === 'medium' ? 'medium' : 'hard';
+        
+        addScore(
+          'wordGuessGame',     // gameType matching UserScores gameTypes
+          score,               // current score
+          maxPossibleScore,    // max possible score
+          timeTakenInSeconds,  // time taken in seconds
+          difficultyLevel      // difficulty level
+        );
+        
+        console.log('WordGame score saved:', { 
+          gameType: 'wordGuessGame', 
+          score, 
+          maxPossibleScore, 
+          timeTakenInSeconds, 
+          level: difficultyLevel 
+        });
+      }
     }
-  }, [gameStartTime]);
+  }, [gameStartTime, user, score, randomQuestions.length, currentLevel, addScore]);
 
 const resetGame = () => {
   setCurrentScreen("home");

@@ -1,6 +1,207 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
 import './ScienceQuiz.css';
 import { useUser } from './UserContext';
+
+// Enhanced Scrolling Hooks - Similar to Leaderboard
+const useMouseDragScroll = (elementRef, options = {}) => {
+  const isDragging = useRef(false);
+  const startPos = useRef({ x: 0, y: 0 });
+  const scrollStart = useRef({ left: 0, top: 0 });
+  const dragThreshold = options.threshold || 5;
+  const enableHorizontal = options.horizontal !== false;
+  const enableVertical = options.vertical !== false;
+
+  const handleMouseDown = useCallback((e) => {
+    if (e.button !== 0 || e.target.draggable) return;
+    
+    const element = elementRef.current;
+    if (!element) return;
+
+    const hasScrollableContent = 
+      element.scrollHeight > element.clientHeight || 
+      element.scrollWidth > element.clientWidth;
+    
+    if (!hasScrollableContent) return;
+
+    e.preventDefault();
+    isDragging.current = true;
+    startPos.current = { x: e.clientX, y: e.clientY };
+    scrollStart.current = { 
+      left: element.scrollLeft, 
+      top: element.scrollTop 
+    };
+
+    element.style.cursor = 'grabbing';
+    element.style.userSelect = 'none';
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging.current) return;
+    
+    const element = elementRef.current;
+    if (!element) return;
+
+    e.preventDefault();
+    
+    const deltaX = e.clientX - startPos.current.x;
+    const deltaY = e.clientY - startPos.current.y;
+    
+    if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
+      if (enableHorizontal) {
+        element.scrollLeft = scrollStart.current.left - deltaX;
+      }
+      if (enableVertical) {
+        element.scrollTop = scrollStart.current.top - deltaY;
+      }
+    }
+  }, [dragThreshold, enableHorizontal, enableVertical]);
+
+  const handleMouseUp = useCallback(() => {
+    if (!isDragging.current) return;
+    
+    isDragging.current = false;
+    const element = elementRef.current;
+    
+    if (element) {
+      element.style.cursor = '';
+      element.style.userSelect = '';
+    }
+    
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  }, [handleMouseMove]);
+
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    element.style.cursor = 'grab';
+    element.addEventListener('mousedown', handleMouseDown);
+    
+    return () => {
+      element.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleMouseDown, handleMouseMove, handleMouseUp]);
+
+  return isDragging.current;
+};
+
+const useEnhancedMouseWheel = (elementRef, options = {}) => {
+  const enableHorizontalShift = options.horizontalShift !== false;
+  const scrollSpeed = options.speed || 1;
+
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const handleWheel = (e) => {
+      if (enableHorizontalShift && e.shiftKey) {
+        e.preventDefault();
+        element.scrollLeft += e.deltaY * scrollSpeed;
+        return;
+      }
+
+      if (scrollSpeed !== 1 && !e.shiftKey) {
+        e.preventDefault();
+        element.scrollTop += e.deltaY * scrollSpeed;
+      }
+    };
+
+    element.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+    };
+  }, [enableHorizontalShift, scrollSpeed]);
+};
+
+const useKeyboardScroll = (elementRef, options = {}) => {
+  const scrollAmount = options.scrollAmount || 50;
+  const enableArrows = options.arrows !== false;
+  const enablePageKeys = options.pageKeys !== false;
+  const enableHomeEnd = options.homeEnd !== false;
+
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const handleKeyDown = (e) => {
+      if (!element.contains(document.activeElement)) return;
+
+      let handled = false;
+
+      if (enableArrows) {
+        switch (e.key) {
+          case 'ArrowUp':
+            element.scrollTop -= scrollAmount;
+            handled = true;
+            break;
+          case 'ArrowDown':
+            element.scrollTop += scrollAmount;
+            handled = true;
+            break;
+          case 'ArrowLeft':
+            element.scrollLeft -= scrollAmount;
+            handled = true;
+            break;
+          case 'ArrowRight':
+            element.scrollLeft += scrollAmount;
+            handled = true;
+            break;
+        }
+      }
+
+      if (enablePageKeys) {
+        switch (e.key) {
+          case 'PageUp':
+            element.scrollTop -= element.clientHeight * 0.9;
+            handled = true;
+            break;
+          case 'PageDown':
+            element.scrollTop += element.clientHeight * 0.9;
+            handled = true;
+            break;
+        }
+      }
+
+      if (enableHomeEnd) {
+        switch (e.key) {
+          case 'Home':
+            if (e.ctrlKey) {
+              element.scrollTop = 0;
+              handled = true;
+            }
+            break;
+          case 'End':
+            if (e.ctrlKey) {
+              element.scrollTop = element.scrollHeight;
+              handled = true;
+            }
+            break;
+        }
+      }
+
+      if (handled) {
+        e.preventDefault();
+      }
+    };
+
+    if (!element.hasAttribute('tabindex')) {
+      element.setAttribute('tabindex', '0');
+    }
+
+    element.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      element.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [scrollAmount, enableArrows, enablePageKeys, enableHomeEnd]);
+};
 const questionSets = {
   level1: [
    {
@@ -1166,6 +1367,12 @@ const ScienceQuiz = memo(() => {
   // FIXED: Move useUser hook inside the component
   const { user, addScore } = useUser();
   
+  // Enhanced Scrolling Refs
+  const gameAreaRef = useRef(null);
+  const leftColumnRef = useRef(null);
+  const rightColumnRef = useRef(null);
+  const containerRef = useRef(null);
+  
   const [gameState, setGameState] = useState('menu');
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [language, setLanguage] = useState('english');
@@ -1180,6 +1387,37 @@ const ScienceQuiz = memo(() => {
   const [feedback, setFeedback] = useState({});
   const [gameStartTime, setGameStartTime] = useState(null);
   const [totalTimeTaken, setTotalTimeTaken] = useState(0);
+
+  // Enhanced Scrolling Hooks
+  const isDraggingGameArea = useMouseDragScroll(gameAreaRef);
+  const isDraggingLeft = useMouseDragScroll(leftColumnRef, { 
+    horizontal: false, 
+    vertical: true 
+  });
+  const isDraggingRight = useMouseDragScroll(rightColumnRef, { 
+    horizontal: false, 
+    vertical: true 
+  });
+  
+  useEnhancedMouseWheel(gameAreaRef, { 
+    horizontalShift: true, 
+    speed: 1.2 
+  });
+  useEnhancedMouseWheel(leftColumnRef, { 
+    horizontalShift: false, 
+    speed: 1 
+  });
+  useEnhancedMouseWheel(rightColumnRef, { 
+    horizontalShift: false, 
+    speed: 1 
+  });
+  
+  useKeyboardScroll(gameAreaRef, { 
+    scrollAmount: 60,
+    arrows: true,
+    pageKeys: true,
+    homeEnd: true
+  });
 
   // Clear matches when question changes
   useEffect(() => {
@@ -1483,7 +1721,14 @@ setTimeout(() => {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="game-container playing-bg">
+    <div 
+      className="game-container playing-bg"
+      ref={containerRef}
+      style={{ 
+        cursor: isDraggingGameArea ? 'grabbing' : '',
+        touchAction: 'pan-y pan-x'
+      }}
+    >
       <Confetti active={showConfetti} />
 
       <div className="game-header">
@@ -1513,8 +1758,24 @@ setTimeout(() => {
         <h2>{questionData.question}</h2>
       </div>
 
-      <div key={`game-area-${currentQuestionIndex}`} className="game-area">
-        <div className="left-column">
+      <div 
+        key={`game-area-${currentQuestionIndex}`} 
+        className="game-area"
+        ref={gameAreaRef}
+        style={{ 
+          cursor: isDraggingGameArea ? 'grabbing' : 'grab',
+          touchAction: 'pan-y pan-x'
+        }}
+        tabIndex={0}
+      >
+        <div 
+          className="left-column"
+          ref={leftColumnRef}
+          style={{ 
+            cursor: isDraggingLeft ? 'grabbing' : 'grab',
+            touchAction: 'pan-y'
+          }}
+        >
           <h3>{language === 'english' ? 'Select:' : 'தேர்ந்தெடு:'}</h3>
           {questionData.leftItems.map((item) => {
             const isMatched = Object.keys(matches).includes(item);
@@ -1555,7 +1816,14 @@ setTimeout(() => {
           })}
         </div>
 
-        <div className="right-column">
+        <div 
+          className="right-column"
+          ref={rightColumnRef}
+          style={{ 
+            cursor: isDraggingRight ? 'grabbing' : 'grab',
+            touchAction: 'pan-y'
+          }}
+        >
           <h3>{language === 'english' ? 'Match:' : 'பொருத்து:'}</h3>
           {questionData.rightItems.map((item) => (
             <div
