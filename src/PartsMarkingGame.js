@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 const PartsMarkingGame = () => {
@@ -319,11 +319,11 @@ const PartsMarkingGame = () => {
     },
   };
 
-  const t = translations[language] || {
+  const t = useMemo(() => translations[language] || {
     parts: {},
     topics: {},
     descriptions: {},
-  };
+  }, [language]);
 
   // Update marker labels when language changes
   useEffect(() => {
@@ -1477,6 +1477,16 @@ const PartsMarkingGame = () => {
   };
 
   const handlePartClick = (e) => {
+    // Check if click is in the back button area (top-left corner)
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+    
+    // If click is in top-left area where back button is, don't handle it
+    if (clickX < 120 && clickY < 60) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -1539,28 +1549,25 @@ const PartsMarkingGame = () => {
     }
   };
 
-  const checkAnswers = () => {
+  const checkAnswers = useCallback(() => {
     setScore(selectedParts.size);
     setShowAnswers(true);
-  };
+  }, [selectedParts.size]);
 
-  const resetGame = () => {
+  const resetGame = useCallback(() => {
     setSelectedParts(new Set());
     setShowAnswers(false);
     setScore(0);
     setLastSelectedPart(null);
     setPointerMarkers([]);
     setInvalidClickPosition(null);
-  };
+  }, []);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = useCallback(() => {
     setLanguage((prevLang) => (prevLang === "english" ? "tamil" : "english"));
-  };
+  }, []);
 
-  // Reset game when topic changes
-  useEffect(() => {
-    resetGame();
-  }, [selectedTopic]);
+
 
   return (
     <>
@@ -1608,10 +1615,12 @@ const PartsMarkingGame = () => {
       <div
         style={{
           padding: "4px",
+          paddingTop: "50px", // Add space for back button
           fontFamily: "Arial, sans-serif",
           backgroundColor: "#9333ea",
           height: "100vh",
           overflow: "hidden",
+          boxSizing: "border-box", // Include padding in height calculation
         }}
       >
         <div
