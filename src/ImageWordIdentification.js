@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ImageWordIdentification.css';
+import { useUser } from './UserContext';
 
 const Notification = ({ message, isVisible, type }) => {
   if (!isVisible) return null;
@@ -80,6 +81,7 @@ const ConfettiAnimation = ({ isVisible, onComplete }) => {
 };
 
 export default function ImageWordIdentification() {
+  const { addScore } = useUser();
   const [language, setLanguage] = useState('en');
   const [currentLevel, setCurrentLevel] = useState('beginner');
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -357,6 +359,12 @@ export default function ImageWordIdentification() {
         }));
         setShowConfetti(true);
       }
+      
+      // Add score to user's overall score
+      if (addScore && score > 0) {
+        addScore(score, 'imageWordIdentification');
+      }
+      
       // Reset to first question instead of showing results
       setCurrentQuestion(0);
       setSelectedOption(null);

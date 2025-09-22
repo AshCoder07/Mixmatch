@@ -1180,6 +1180,7 @@ const ScienceQuiz = memo(() => {
   const [feedback, setFeedback] = useState({});
   const [gameStartTime, setGameStartTime] = useState(null);
   const [totalTimeTaken, setTotalTimeTaken] = useState(0);
+  const [scoreSaved, setScoreSaved] = useState(false);
 
   // Clear matches when question changes
   useEffect(() => {
@@ -1221,11 +1222,12 @@ const ScienceQuiz = memo(() => {
     setFeedback({});
     setGameStartTime(Date.now());
     setTotalTimeTaken(0);
+    setScoreSaved(false); // Reset score saved flag for new game
   };
 
   // FIXED: Proper score saving function
 const saveGameScore = () => {
-  if (!user || !questions.length || !gameStartTime) return;
+  if (!user || !questions.length || !gameStartTime || scoreSaved) return;
 
   const endTime = Date.now();
   const timeTakenSeconds = Math.round((endTime - gameStartTime) / 1000);
@@ -1240,6 +1242,7 @@ const saveGameScore = () => {
     selectedLevel || 'level1' // difficulty level
   );
   
+  setScoreSaved(true); // Mark as saved to prevent duplicates
   console.log('Score saved:', { gameType: 'scienceQuiz', score, maxPossibleScore, timeTakenSeconds, level: selectedLevel });
 };
   const handleTimeUp = () => {

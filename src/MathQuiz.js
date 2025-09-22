@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+import { useUser } from './UserContext';
 
 // Tamil Translations
 const translations = {
@@ -164,6 +165,7 @@ const QuizFeedback = memo(({ message, type, correctAnswer, language, onNext }) =
 
 // Main App Component - Memoized for performance
 const MathQuiz = memo(() => {
+  const { addScore } = useUser();
   const [currentScreen, setCurrentScreen] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [language, setLanguage] = useState("english");
@@ -242,6 +244,16 @@ const MathQuiz = memo(() => {
     } else {
       setIsTestActive(false);
       setCurrentScreen("results");
+      
+      // Save score to UserContext
+      const maxPossibleScore = shuffledQuestions.length;
+      addScore(
+        'mathQuiz',
+        score,
+        maxPossibleScore,
+        null, // No time tracking in current implementation
+        selectedLevel || 'beginner'
+      );
     }
   }, [currentQuestionIndex, shuffledQuestions.length]);
 

@@ -16,8 +16,9 @@ const UserScores = () => {
     scienceQuiz: { name: 'Science Quiz', icon: '🔬' },
     wordGuessGame: { name: 'Word Game', icon: '🔤' },
     chemistryWordGame: { name: 'Chemistry Word Game', icon: '🧪' },
+    partsMarkingGame: { name: 'Parts Marking Game', icon: '🔍' },
     geographyMapping: { name: 'Geography', icon: '🗺' },
-    labExperiments: { name: 'Lab Experiments', icon: '🧪' }
+    imageWordIdentification: { name: 'Image Word Quiz', icon: '🖼' }
   };
 
   useEffect(() => {

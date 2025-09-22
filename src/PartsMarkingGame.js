@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from './UserContext';
 
 const PartsMarkingGame = () => {
   const navigate = useNavigate();
+  const { addScore } = useUser();
   const [selectedTopic, setSelectedTopic] = useState("plantcell");
   const [selectedParts, setSelectedParts] = useState(new Set());
   const [showAnswers, setShowAnswers] = useState(false);
@@ -1550,9 +1552,20 @@ const PartsMarkingGame = () => {
   };
 
   const checkAnswers = useCallback(() => {
-    setScore(selectedParts.size);
+    const finalScore = selectedParts.size;
+    setScore(finalScore);
     setShowAnswers(true);
-  }, [selectedParts.size]);
+    
+    // Save score to UserContext
+    const maxPossibleScore = topics[selectedTopic].parts.length;
+    addScore(
+      'partsMarkingGame',
+      finalScore,
+      maxPossibleScore,
+      null, // No time tracking in current implementation
+      selectedTopic // Use the selected topic as difficulty level
+    );
+  }, [selectedParts.size, selectedTopic, addScore]);
 
   const resetGame = useCallback(() => {
     setSelectedParts(new Set());
