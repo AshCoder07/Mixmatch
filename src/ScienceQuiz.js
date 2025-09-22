@@ -1285,107 +1285,114 @@ const saveGameScore = () => {
   };
 
   // FIXED: The main issue was here - checkAnswer function now works properly with both languages
-  const checkAnswer = () => {
-    const currentQuestion = questions[currentQuestionIndex];
-    const correctMatches = currentQuestion.correctMatches; // This is always in English
-    const currentMatches = matches; // This is in current language
+  // In the checkAnswer function, remove the score saving logic and only save once at game end
+
+const checkAnswer = () => {
+  const currentQuestion = questions[currentQuestionIndex];
+  const correctMatches = currentQuestion.correctMatches; // This is always in English
+  const currentMatches = matches; // This is in current language
+  
+  let newFeedback = {};
+  let correctCount = 0;
+
+  // Get the current language data
+  const questionData = currentQuestion[language];
+  const leftItems = questionData.leftItems;
+  const rightItems = questionData.rightItems;
+
+  // Create mappings to handle language differences
+  let leftMapping = {}; // Maps current language left items to English
+  let rightMapping = {}; // Maps current language right items to English
+  
+  if (language === 'tamil') {
+    // Create mapping from Tamil to English for both sides
+    const englishData = currentQuestion.english;
     
-    let newFeedback = {};
-    let correctCount = 0;
-
-    // Get the current language data
-    const questionData = currentQuestion[language];
-    const leftItems = questionData.leftItems;
-    const rightItems = questionData.rightItems;
-
-    // FIXED: Create mappings to handle language differences
-    let leftMapping = {}; // Maps current language left items to English
-    let rightMapping = {}; // Maps current language right items to English
+    englishData.leftItems.forEach((englishItem, index) => {
+      leftMapping[leftItems[index]] = englishItem;
+    });
     
-    if (language === 'tamil') {
-      // Create mapping from Tamil to English for both sides
-      const englishData = currentQuestion.english;
-      
-      englishData.leftItems.forEach((englishItem, index) => {
-        leftMapping[leftItems[index]] = englishItem;
-      });
-      
-      englishData.rightItems.forEach((englishItem, index) => {
-        rightMapping[rightItems[index]] = englishItem;
-      });
-    } else {
-      // For English, direct mapping
-      leftItems.forEach(item => leftMapping[item] = item);
-      rightItems.forEach(item => rightMapping[item] = item);
-    }
+    englishData.rightItems.forEach((englishItem, index) => {
+      rightMapping[rightItems[index]] = englishItem;
+    });
+  } else {
+    // For English, direct mapping
+    leftItems.forEach(item => leftMapping[item] = item);
+    rightItems.forEach(item => rightMapping[item] = item);
+  }
 
-    // Check each left item for correct matches
-    leftItems.forEach(leftItem => {
-      const englishLeftItem = leftMapping[leftItem];
-      const expectedEnglishRight = correctMatches[englishLeftItem];
+  // Check each left item for correct matches
+  leftItems.forEach(leftItem => {
+    const englishLeftItem = leftMapping[leftItem];
+    const expectedEnglishRight = correctMatches[englishLeftItem];
+    
+    if (currentMatches[leftItem]) {
+      const englishRightItem = rightMapping[currentMatches[leftItem]];
       
-      if (currentMatches[leftItem]) {
-        const englishRightItem = rightMapping[currentMatches[leftItem]];
-        
-        if (englishRightItem === expectedEnglishRight) {
-          newFeedback[leftItem] = 'correct';
-          correctCount++;
-        } else {
-          newFeedback[leftItem] = 'incorrect';
-        }
+      if (englishRightItem === expectedEnglishRight) {
+        newFeedback[leftItem] = 'correct';
+        correctCount++;
       } else {
         newFeedback[leftItem] = 'incorrect';
       }
-    });
-
-    console.log('Current Language:', language);
-    console.log('Left Items:', leftItems);
-    console.log('Current Matches:', currentMatches);
-    console.log('Left Mapping:', leftMapping);
-    console.log('Right Mapping:', rightMapping);
-    console.log('Expected Matches (English):', correctMatches);
-    console.log('Feedback:', newFeedback);
-
-    setFeedback(newFeedback);
-    setShowResults(true);
-
-    if (correctCount > 0) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 1500);
+    } else {
+      newFeedback[leftItem] = 'incorrect';
     }
+  });
 
-   setScore(prev => {
-  const newScore = prev + correctCount;
-  
-  // If this is the last question, save the score after state update
-  if (currentQuestionIndex >= questions.length - 1) {
-    setTimeout(() => {
-      saveGameScore();
-    }, 100);
-  }
-  
-  return newScore;
-});
+  setFeedback(newFeedback);
+  setShowResults(true);
 
-setTimeout(() => {
-  if (currentQuestionIndex < questions.length - 1) {
-    // Clear all user inputs first
-    setMatches({});
-    setSelectedLeft(null);
-    setFeedback({});
-    setShowResults(false);
-    
-    // Then move to next question after a small delay
-    setTimeout(() => {
-      setCurrentQuestionIndex(prev => prev + 1);
-      setTimeLeft(40);
-    }, 100);
-  } else {
-    // Game completed
-    setGameState('results');
+  if (correctCount > 0) {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 1500);
   }
-}, 1500);
-  };
+
+  // FIXED: Only update score, don't save here
+  setScore(prev => prev + correctCount);
+
+  setTimeout(() => {
+    if (currentQuestionIndex < questions.length - 1) {
+      // Clear all user inputs first
+      setMatches({});
+      setSelectedLeft(null);
+      setFeedback({});
+      setShowResults(false);
+      
+      // Then move to next question after a small delay
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setTimeLeft(40);
+      }, 100);
+    } else {
+      // FIXED: Game completed - save score only once here
+      if (!scoreSaved && user && questions.length > 0 && gameStartTime) {
+        const endTime = Date.now();
+        const timeTakenSeconds = Math.round((endTime - gameStartTime) / 1000);
+        const maxPossibleScore = questions.length * 4; // 4 matches per question
+        const finalScore = score + correctCount; // Include current question's score
+        
+        addScore(
+          'scienceQuiz',
+          finalScore,
+          maxPossibleScore,
+          timeTakenSeconds,
+          selectedLevel || 'level1'
+        );
+        
+        setScoreSaved(true);
+        console.log('Score saved:', { 
+          gameType: 'scienceQuiz', 
+          score: finalScore, 
+          maxPossibleScore, 
+          timeTakenSeconds, 
+          level: selectedLevel 
+        });
+      }
+      setGameState('results');
+    }
+  }, 1500);
+};
   const resetGame = () => {
     setGameState('menu');
     setSelectedLevel(null);

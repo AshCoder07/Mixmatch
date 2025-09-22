@@ -105,6 +105,7 @@ const GeographyGame = () => {
   useEffect(() => {
     isAnsweredRef.current = isAnswered;
   }, [isAnswered]);
+
   // Memoize map configurations
   const mapConfigs = useMemo(
     () => ({
@@ -440,14 +441,33 @@ const GeographyGame = () => {
     [startTimer, mapConfigs]
   );
 
+  // FIXED endGame function - This is the key fix
   const endGame = useCallback(() => {
     stopTimer();
     setGameState("completed");
 
-    if (user && saveScore && score > 0) {
-      saveScore("geographyMapping", score, user.name);
+    if (user && saveScore) {
+      try {
+        // Calculate correct answers from game results
+        const correctAnswers = gameResults.filter((r) => r.correct).length;
+        const currentMapConfig = getCurrentMapConfig();
+        const totalQuestions = currentMapConfig.points.length;
+        
+        // Calculate percentage based on correct answers (not points)
+        const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+        
+        // Calculate total time taken
+        const totalTimeTaken = gameResults.reduce((sum, result) => sum + (result.timeTaken || 0), 0);
+        
+        // Save the percentage as the score - this ensures 100% shows as 100%
+        // Use only basic parameters that your saveScore function expects
+        saveScore("geographyMapping", percentage, user.name);
+        
+      } catch (error) {
+        console.error("Error saving score:", error);
+      }
     }
-  }, [user, saveScore, score, stopTimer]);
+  }, [user, saveScore, stopTimer, getCurrentMapConfig, gameResults]);
 
   const resetGame = useCallback(() => {
     stopTimer();
@@ -497,6 +517,7 @@ const GeographyGame = () => {
       }
     };
   }, [stopTimer]);
+
   // Optimized styles for viewboard without scroll
   const getViewboardStyles = () => ({
     container: {
@@ -668,12 +689,9 @@ const GeographyGame = () => {
   if (gameState === "completed") {
     const correctAnswers = gameResults.filter((r) => r.correct).length;
     const totalQuestions = gameResults.length;
-    const percentage = Math.round((correctAnswers / totalQuestions) * 100);
-    const totalTime = gameResults.reduce(
-      (sum, result) => sum + result.timeTaken,
-      0
-    );
-    const avgTime = Math.round(totalTime / totalQuestions);
+    const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+    const totalTime = gameResults.reduce((sum, result) => sum + (result.timeTaken || 0), 0);
+    const avgTime = totalQuestions > 0 ? Math.round(totalTime / totalQuestions) : 0;
 
     let performanceLevel = "";
     if (percentage >= 80) {
@@ -920,7 +938,7 @@ const GeographyGame = () => {
             >
               {gameResults.slice(0, 8).map((result, index) => (
                 <div
-                  key={`{${result.question}-${index}}`}
+                  key={`${result.question}-${index}`}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
