@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useUser } from './UserContext';
 
 // Simple translations
 const translations = {
@@ -175,6 +176,7 @@ const generateRandomQuestions = (level) => {
 
 // Main component
 const WordGame = memo(() => {
+  const { user, addScore } = useUser();
   const [language, setLanguage] = useState("en");
   const [currentLevel, setCurrentLevel] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("home"); // home, game, results
@@ -346,8 +348,28 @@ const useHint = () => {
       const endTime = Date.now();
       const timeTakenInSeconds = Math.round((endTime - gameStartTime) / 1000);
       setTotalGameTime(timeTakenInSeconds);
+      
+      // Save score to the platform scoring system
+      if (user && addScore) {
+        const maxPossibleScore = randomQuestions.length * 10; // 10 points per question
+        addScore(
+          'chemistryWordGame',     // gameType - unique identifier for this game
+          score,                  // current score
+          maxPossibleScore,       // max possible score
+          timeTakenInSeconds,     // time taken in seconds
+          currentLevel || 'beginner' // difficulty level
+        );
+        
+        console.log('GFGWordGame score saved:', { 
+          gameType: 'chemistryWordGame', 
+          score, 
+          maxPossibleScore, 
+          timeTakenInSeconds, 
+          level: currentLevel 
+        });
+      }
     }
-  }, [gameStartTime]);
+  }, [gameStartTime, user, addScore, score, randomQuestions.length, currentLevel]);
 
 const resetGame = () => {
   setCurrentScreen("home");

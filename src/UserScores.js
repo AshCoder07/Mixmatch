@@ -15,6 +15,7 @@ const UserScores = () => {
     mathQuiz: { name: 'Math Quiz', icon: '➕' },
     scienceQuiz: { name: 'Science Quiz', icon: '🔬' },
     wordGuessGame: { name: 'Word Game', icon: '🔤' },
+    chemistryWordGame: { name: 'Chemistry Word Game', icon: '🧪' },
     geographyMapping: { name: 'Geography', icon: '🗺' },
     labExperiments: { name: 'Lab Experiments', icon: '🧪' }
   };
