@@ -124,10 +124,23 @@ export const UserProvider = ({ children }) => {
       date: new Date().toLocaleDateString()
     };
 
+    console.log('🔵 UserContext.addScore CALLED:', {
+      scoreId: scoreEntry.id,
+      gameType,
+      score,
+      maxScore,
+      percentage: scoreEntry.percentage,
+      timestamp: new Date().toISOString()
+    });
+
     // Save individual score
     const allScores = JSON.parse(localStorage.getItem('allScores') || '[]');
     allScores.push(scoreEntry);
     localStorage.setItem('allScores', JSON.stringify(allScores));
+    console.log('✅ UserContext.addScore SAVED to localStorage:', {
+      scoreId: scoreEntry.id,
+      totalScoresCount: allScores.length
+    });
 
     // Update user's total score and games played
     const updatedUser = {
@@ -178,9 +191,13 @@ export const UserProvider = ({ children }) => {
       }
     }
 
-    console.log('Saving score:', { gameType, score, calculatedMaxScore, userName });
+    console.log('🟡 UserContext.saveScore RECEIVED:', { gameId, score, userName, timeTaken, maxScore });
+    console.log('🟡 UserContext.saveScore CALCULATED:', { gameType, score, calculatedMaxScore, percentage: Math.round((score / calculatedMaxScore) * 100) });
+    console.log('🟡 UserContext.saveScore CALLING addScore now...');
     
-    return addScore(gameType, score, calculatedMaxScore, timeTaken, 'normal');
+    const result = addScore(gameType, score, calculatedMaxScore, timeTaken, 'normal');
+    console.log('🟡 UserContext.saveScore COMPLETED, returned:', result?.id);
+    return result;
   };
 
   const getUserScores = (userId = null) => {

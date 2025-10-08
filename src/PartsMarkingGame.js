@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from './UserContext';
+import ConfettiExplosion from 'react-confetti-explosion';
+import { useUser } from "./UserContext";
 
 const PartsMarkingGame = () => {
   const navigate = useNavigate();
   const { addScore } = useUser();
-  const [selectedTopic, setSelectedTopic] = useState("plantcell");
+  const [selectedCategory, setSelectedCategory] = useState(null); // null, 'physics', 'botany', 'zoology'
+  const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedParts, setSelectedParts] = useState(new Set());
   const [showAnswers, setShowAnswers] = useState(false);
   const [score, setScore] = useState(0);
@@ -13,13 +15,16 @@ const PartsMarkingGame = () => {
   const [lastSelectedPart, setLastSelectedPart] = useState(null);
   const [pointerMarkers, setPointerMarkers] = useState([]);
   const [invalidClickPosition, setInvalidClickPosition] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  // Clear markers when topic changes
+  // Clear markers and reset everything when topic changes
   useEffect(() => {
     setPointerMarkers([]);
     setSelectedParts(new Set());
     setLastSelectedPart(null);
     setInvalidClickPosition(null);
+    setScore(0); // Reset score when changing topics
+    setShowAnswers(false); // Hide results when changing topics
   }, [selectedTopic]);
 
   const translations = {
@@ -27,8 +32,15 @@ const PartsMarkingGame = () => {
       gameTitle: "Parts Marking Game",
       backToHome: "Home",
       gameSubtitle: "Click on any part of the diagram to identify it",
+      chooseCategory: "Choose a Category:",
       chooseTopic: "Choose a Topic:",
+      backToCategories: "← Back to Categories",
       selectedParts: "Selected Parts",
+      categories: {
+        physics: "Physics",
+        botany: "Botany",
+        zoology: "Zoology",
+      },
       gameControls: "Game Controls",
       perfectScore: "🎉 Perfect Score!",
       results: "📊 Results",
@@ -174,8 +186,15 @@ const PartsMarkingGame = () => {
       gameTitle: "பாகங்கள் அடையாளம் காணும் விளையாட்டு",
       backToHome: "முகப்பு",
       gameSubtitle: "பாகங்களை அடையாளம் காண வரைபடத்தில் கிளிக் செய்யுங்கள்",
+      chooseCategory: "வகை தேர்வு செய்யுங்கள்:",
       chooseTopic: "தலைப்பு தேர்வு செய்யுங்கள்:",
+      backToCategories: "← வகைகளுக்கு திரும்பு",
       selectedParts: "தேர்ந்தெடுக்கப்பட்ட பாகங்கள்",
+      categories: {
+        physics: "இயற்பியல்",
+        botany: "தாவரவியல்",
+        zoology: "விலங்கியல்",
+      },
       gameControls: "விளையாட்டு கட்டுப்பாடுகள்",
       perfectScore: "🎉 முழு மதிப்பெண்!",
       results: "📊 முடிவுகள்",
@@ -321,11 +340,15 @@ const PartsMarkingGame = () => {
     },
   };
 
-  const t = useMemo(() => translations[language] || {
-    parts: {},
-    topics: {},
-    descriptions: {},
-  }, [language]);
+  const t = useMemo(
+    () =>
+      translations[language] || {
+        parts: {},
+        topics: {},
+        descriptions: {},
+      },
+    [language]
+  );
 
   // Update marker labels when language changes
   useEffect(() => {
@@ -349,6 +372,13 @@ const PartsMarkingGame = () => {
       strokeWidth: isSelected ? "4" : undefined,
       opacity: isSelected ? 0.8 : 1,
     };
+  };
+
+  // Category mapping for topics
+  const categoryMapping = {
+    physics: ['circuit', 'solar'],
+    botany: ['plantcell'],
+    zoology: ['sperm', 'egg', 'eye', 'animalcell'],
   };
 
   const topics = {
@@ -695,6 +725,20 @@ const PartsMarkingGame = () => {
             data-part="lens"
           />
 
+          {/* Cornea - transparent front (drawn first, behind other elements) */}
+          <ellipse
+            cx="125"
+            cy="150"
+            rx="35"
+            ry="40"
+            fill="#F0F8FF"
+            opacity="0.6"
+            stroke="#4682B4"
+            strokeWidth="2"
+            style={getElementStyle("cornea")}
+            data-part="cornea"
+          />
+
           {/* Iris - colored part */}
           <circle
             cx="135"
@@ -707,7 +751,7 @@ const PartsMarkingGame = () => {
             data-part="iris"
           />
 
-          {/* Pupil - black opening */}
+          {/* Pupil - black opening (drawn last, on top) */}
           <circle
             cx="135"
             cy="150"
@@ -715,20 +759,6 @@ const PartsMarkingGame = () => {
             fill="#000000"
             style={getElementStyle("pupil")}
             data-part="pupil"
-          />
-
-          {/* Cornea - transparent front */}
-          <ellipse
-            cx="125"
-            cy="150"
-            rx="35"
-            ry="40"
-            fill="#F0F8FF"
-            opacity="0.6"
-            stroke="#4682B4"
-            strokeWidth="2"
-            style={getElementStyle("cornea")}
-            data-part="cornea"
           />
 
           {/* Optic Nerve */}
@@ -1483,7 +1513,7 @@ const PartsMarkingGame = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
-    
+
     // If click is in top-left area where back button is, don't handle it
     if (clickX < 120 && clickY < 60) {
       return;
@@ -1514,19 +1544,16 @@ const PartsMarkingGame = () => {
         const newSet = new Set(prev);
         const isCurrentlySelected = newSet.has(part);
 
-        if (isCurrentlySelected) {
-          newSet.delete(part);
-          setLastSelectedPart(null); // Clear description when deselecting
-
-          // Remove pointer marker for this part
-          setPointerMarkers((prevMarkers) =>
-            prevMarkers.filter((marker) => marker.partName !== part)
-          );
-        } else {
+        if (!isCurrentlySelected) {
+          // Part not found yet - add it and show the label temporarily
           newSet.add(part);
           setLastSelectedPart(part); // Show description when selecting
 
-          // Add pointer marker for this part at exact click position
+          // Show confetti for correct selection
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 1000);
+
+          // Add pointer marker for this part at exact click position - temporarily
           const clickPosition = getClickPosition(e);
 
           setPointerMarkers((prevMarkers) => [
@@ -1539,7 +1566,15 @@ const PartsMarkingGame = () => {
               label: (t && t.parts && t.parts[part]) || part, // Use current language part names
             },
           ]);
+
+          // Remove the marker after 1 second (part name disappears)
+          setTimeout(() => {
+            setPointerMarkers((prevMarkers) =>
+              prevMarkers.filter((marker) => marker.partName !== part)
+            );
+          }, 1000);
         }
+        // If part is already selected, don't show marker again
         return newSet;
       });
     } else {
@@ -1555,11 +1590,11 @@ const PartsMarkingGame = () => {
     const finalScore = selectedParts.size;
     setScore(finalScore);
     setShowAnswers(true);
-    
+
     // Save score to UserContext
     const maxPossibleScore = topics[selectedTopic].parts.length;
     addScore(
-      'partsMarkingGame',
+      "partsMarkingGame",
       finalScore,
       maxPossibleScore,
       null, // No time tracking in current implementation
@@ -1580,10 +1615,18 @@ const PartsMarkingGame = () => {
     setLanguage((prevLang) => (prevLang === "english" ? "tamil" : "english"));
   }, []);
 
-
-
   return (
     <>
+      {showConfetti && (
+        <div style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}>
+          <ConfettiExplosion
+            force={0.8}
+            duration={3000}
+            particleCount={150}
+            width={1600}
+          />
+        </div>
+      )}
       <style>
         {`
           @keyframes pulse {
@@ -1694,92 +1737,265 @@ const PartsMarkingGame = () => {
             </p>
           </div>
 
-          {/* Topic Selection */}
-          <div
-            style={{
-              backgroundColor: "white",
-              borderRadius: "8px",
-              padding: "8px",
-              marginBottom: "4px",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h3
-              style={{
-                margin: "0 0 8px 0",
-                color: "#2c3e50",
-                fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)",
-              }}
-            >
-              {t.chooseTopic}
-            </h3>
+          {/* Category & Topic Selection */}
+          {!selectedCategory ? (
+            // Category Selection Screen - Vertical Layout
             <div
               style={{
+                backgroundColor: "white",
+                borderRadius: "12px",
+                padding: "40px 20px",
+                marginBottom: "4px",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
                 display: "flex",
-                flexWrap: "wrap",
-                gap: "6px",
+                flexDirection: "column",
+                alignItems: "center",
                 justifyContent: "center",
+                minHeight: "500px",
               }}
             >
-              {Object.entries(topics).map(([key, topic]) => (
+              <h3
+                style={{
+                  margin: "0 0 40px 0",
+                  color: "#2c3e50",
+                  fontSize: "clamp(1.5rem, 4vw, 2rem)",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                {t.chooseCategory}
+              </h3>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "20px",
+                  width: "100%",
+                  maxWidth: "500px",
+                }}
+              >
+                {/* Physics Button */}
                 <button
-                  key={key}
-                  onClick={() => setSelectedTopic(key)}
+                  onClick={() => setSelectedCategory('physics')}
                   style={{
-                    padding: "6px 12px",
-                    border:
-                      selectedTopic === key
-                        ? "2px solid #007bff"
-                        : "1px solid #dee2e6",
-                    borderRadius: "6px",
-                    backgroundColor:
-                      selectedTopic === key ? "#007bff" : "white",
-                    color: selectedTopic === key ? "white" : "#495057",
+                    padding: "30px 40px",
+                    border: "3px solid #007bff",
+                    borderRadius: "20px",
+                    backgroundColor: "white",
                     cursor: "pointer",
-                    fontSize: "clamp(0.7rem, 2vw, 0.85rem)",
-                    fontWeight: selectedTopic === key ? "bold" : "normal",
-                    minWidth: "80px",
+                    fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
+                    fontWeight: "bold",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 4px 12px rgba(0,123,255,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "15px",
+                    width: "100%",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#007bff";
+                    e.currentTarget.style.color = "white";
+                    e.currentTarget.style.transform = "translateY(-5px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,123,255,0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "white";
+                    e.currentTarget.style.color = "#007bff";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,123,255,0.2)";
                   }}
                 >
-                  {topic.title}
+                  <span style={{ fontSize: "2.5rem" }}>⚡</span>
+                  <span style={{ color: "inherit" }}>{t.categories.physics}</span>
                 </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Main Game Area - Flexible Layout */}
-          <div
-            style={{
-              flex: 1,
-              display: "grid",
-              gridTemplateColumns: "1fr 250px",
-              gap: "8px",
-              overflow: "hidden",
-              minHeight: 0, // Allow flex child to shrink
-            }}
-          >
-            {/* Diagram Section */}
+                {/* Botany Button */}
+                <button
+                  onClick={() => setSelectedCategory('botany')}
+                  style={{
+                    padding: "30px 40px",
+                    border: "3px solid #28a745",
+                    borderRadius: "20px",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                    fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
+                    fontWeight: "bold",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 4px 12px rgba(40,167,69,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "15px",
+                    width: "100%",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#28a745";
+                    e.currentTarget.style.color = "white";
+                    e.currentTarget.style.transform = "translateY(-5px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(40,167,69,0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "white";
+                    e.currentTarget.style.color = "#28a745";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(40,167,69,0.2)";
+                  }}
+                >
+                  <span style={{ fontSize: "2.5rem" }}>🌱</span>
+                  <span style={{ color: "inherit" }}>{t.categories.botany}</span>
+                </button>
+
+                {/* Zoology Button */}
+                <button
+                  onClick={() => setSelectedCategory('zoology')}
+                  style={{
+                    padding: "30px 40px",
+                    border: "3px solid #dc3545",
+                    borderRadius: "20px",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                    fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
+                    fontWeight: "bold",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 4px 12px rgba(220,53,69,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "15px",
+                    width: "100%",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#dc3545";
+                    e.currentTarget.style.color = "white";
+                    e.currentTarget.style.transform = "translateY(-5px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(220,53,69,0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "white";
+                    e.currentTarget.style.color = "#dc3545";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(220,53,69,0.2)";
+                  }}
+                >
+                  <span style={{ fontSize: "2.5rem" }}>🧬</span>
+                  <span style={{ color: "inherit" }}>{t.categories.zoology}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Topic Selection Screen (after category selected)
             <div
               style={{
                 backgroundColor: "white",
                 borderRadius: "8px",
                 padding: "8px",
+                marginBottom: "4px",
                 boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                display: "flex",
-                flexDirection: "column",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+                <button
+                  onClick={() => {
+                    setSelectedCategory(null);
+                    setSelectedTopic(null);
+                    setSelectedParts(new Set());
+                    setPointerMarkers([]);
+                    setScore(0);
+                    setShowAnswers(false);
+                  }}
+                  style={{
+                    padding: "4px 12px",
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "clamp(0.7rem, 2vw, 0.85rem)",
+                    cursor: "pointer",
+                    marginRight: "12px",
+                  }}
+                >
+                  {t.backToCategories}
+                </button>
+                <h3
+                  style={{
+                    margin: "0",
+                    color: "#2c3e50",
+                    fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)",
+                  }}
+                >
+                  {t.chooseTopic}
+                </h3>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "6px",
+                  justifyContent: "center",
+                }}
+              >
+                {categoryMapping[selectedCategory]?.map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedTopic(key)}
+                    style={{
+                      padding: "6px 12px",
+                      border:
+                        selectedTopic === key
+                          ? "2px solid #007bff"
+                          : "1px solid #dee2e6",
+                      borderRadius: "6px",
+                      backgroundColor:
+                        selectedTopic === key ? "#007bff" : "white",
+                      color: selectedTopic === key ? "white" : "#495057",
+                      cursor: "pointer",
+                      fontSize: "clamp(0.7rem, 2vw, 0.85rem)",
+                      fontWeight: selectedTopic === key ? "bold" : "normal",
+                      minWidth: "80px",
+                    }}
+                  >
+                    {topics[key]?.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Main Game Area - Flexible Layout */}
+          {selectedTopic ? (
+            <div
+              style={{
+                flex: 1,
+                display: "grid",
+                gridTemplateColumns: "1fr 250px",
+                gap: "8px",
+                overflow: "hidden",
                 minHeight: 0, // Allow flex child to shrink
               }}
             >
-              <h2
+              {/* Diagram Section */}
+              <div
                 style={{
-                  textAlign: "center",
-                  color: "#2c3e50",
-                  marginBottom: "8px",
-                  fontSize: "clamp(1rem, 2.5vw, 1.3rem)",
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  padding: "8px",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight: 0, // Allow flex child to shrink
                 }}
               >
-                {topics[selectedTopic].title}
-              </h2>
+                <h2
+                  style={{
+                    textAlign: "center",
+                    color: "#2c3e50",
+                    marginBottom: "8px",
+                    fontSize: "clamp(1rem, 2.5vw, 1.3rem)",
+                  }}
+                >
+                  {topics[selectedTopic].title}
+                </h2>
 
               <div
                 onClick={handlePartClick}
@@ -1812,7 +2028,7 @@ const PartsMarkingGame = () => {
                     },
                   })}
 
-                  {/* Pointer Markers with Labels */}
+                  {/* Pointer Markers with Labels - Temporary display */}
                   {pointerMarkers.map((marker) => (
                     <div
                       key={marker.id}
@@ -1828,38 +2044,24 @@ const PartsMarkingGame = () => {
                         alignItems: "flex-start",
                       }}
                     >
-                      {/* Pointer marker */}
+                      {/* Label with part name - appears temporarily when clicked */}
                       <div
                         style={{
-                          width: "8px",
-                          height: "8px",
-                          borderRadius: "50%",
-                          backgroundColor: "#FF6B6B",
-                          border: "1px solid white",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                          marginBottom: "2px",
-                          position: "relative",
-                          top: "0px",
-                          left: "0px",
-                        }}
-                      />
-
-                      {/* Label with part name */}
-                      <div
-                        style={{
-                          backgroundColor: "rgba(0, 0, 0, 0.85)",
+                          backgroundColor: "rgba(0, 150, 0, 0.9)", // Green background for found parts
                           color: "white",
-                          padding: "2px 6px",
-                          borderRadius: "4px",
-                          fontSize: "10px",
+                          padding: "4px 8px",
+                          borderRadius: "6px",
+                          fontSize: "12px",
                           fontWeight: "bold",
                           whiteSpace: "nowrap",
                           boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                          maxWidth: "120px",
+                          maxWidth: "150px",
                           textAlign: "center",
+                          border: "2px solid #4CAF50", // Green border
+                          animation: "fadeInOut 2s ease-in-out", // Add fade animation
                         }}
                       >
-                        {marker.label || marker.partName}
+                        ✓ {marker.label || marker.partName}
                       </div>
                     </div>
                   ))}
@@ -2219,6 +2421,38 @@ const PartsMarkingGame = () => {
               )}
             </div>
           </div>
+          ) : (
+            // Placeholder when no topic is selected
+            selectedCategory && (
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  padding: "40px",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <h3
+                    style={{
+                      color: "#6c757d",
+                      fontSize: "clamp(1rem, 3vw, 1.5rem)",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    👆 {t.chooseTopic}
+                  </h3>
+                  <p style={{ color: "#adb5bd", fontSize: "clamp(0.9rem, 2vw, 1.1rem)" }}>
+                    {t.instructions}
+                  </p>
+                </div>
+              </div>
+            )
+          )}
         </div>
       </div>
     </>

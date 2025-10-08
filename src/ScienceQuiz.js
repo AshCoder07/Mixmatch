@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import './ScienceQuiz.css';
 import { useUser } from './UserContext';
+import ConfettiExplosion from 'react-confetti-explosion';
 const questionSets = {
   level1: [
    {
@@ -1140,28 +1141,6 @@ const levelInfo = {
   level3: { english: "11-12", tamil: "11-12", color: "level3", icon: "🏆" }
 };
 
-// Fast Confetti Component
-
-const Confetti = ({ active }) => {
-  if (!active) return null;
-  
-  return (
-    <div className="confetti-container">
-      {[...Array(50)].map((_, i) => (
-        <div
-          key={i}
-          className="confetti-piece"
-          style={{
-            left: Math.random() * 100 + '%',
-            animationDelay: Math.random() * 1 + 's',
-            backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#feca57'][Math.floor(Math.random() * 4)]
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
 const ScienceQuiz = memo(() => {
   // FIXED: Move useUser hook inside the component
   const { user, addScore } = useUser();
@@ -1199,6 +1178,15 @@ const ScienceQuiz = memo(() => {
     }
     return () => clearTimeout(timer);
   }, [timeLeft, gameState]);
+
+  // Trigger confetti on results screen
+  useEffect(() => {
+    if (gameState === 'results') {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState]);
 
   const initializeQuestions = (level) => {
     const levelQuestions = questionSets[level];
@@ -1457,7 +1445,16 @@ const checkAnswer = () => {
     
     return (
       <div className="game-container results-bg">
-        <Confetti active={true} />
+        {showConfetti && (
+          <div style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}>
+            <ConfettiExplosion
+              force={0.8}
+              duration={3000}
+              particleCount={150}
+              width={1600}
+            />
+          </div>
+        )}
         <div className="results-container">
           <div className="trophy">🏆</div>
           <h1>{language === 'english' ? 'Complete!' : 'முடிந்தது!'}</h1>
@@ -1494,7 +1491,16 @@ const checkAnswer = () => {
 
   return (
     <div className="game-container playing-bg">
-      <Confetti active={showConfetti} />
+      {showConfetti && (
+        <div style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}>
+          <ConfettiExplosion
+            force={0.8}
+            duration={3000}
+            particleCount={150}
+            width={1600}
+          />
+        </div>
+      )}
 
       <div className="game-header">
         <div className="header-right">

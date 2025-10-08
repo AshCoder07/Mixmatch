@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { useUser } from './UserContext';
-import './Leaderboard.css';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { useUser } from "./UserContext";
+import "./Leaderboard.css";
 
 // Enhanced Mouse and Touch Scrolling Hooks - Inline Implementation
 const useMouseDragScroll = (elementRef, options = {}) => {
@@ -14,78 +14,84 @@ const useMouseDragScroll = (elementRef, options = {}) => {
 
   const handleMouseDown = useCallback((e) => {
     if (e.button !== 0 || e.target.draggable) return;
-    
+
     const element = elementRef.current;
     if (!element) return;
 
-    const hasScrollableContent = 
-      element.scrollHeight > element.clientHeight || 
+    const hasScrollableContent =
+      element.scrollHeight > element.clientHeight ||
       element.scrollWidth > element.clientWidth;
-    
+
     if (!hasScrollableContent) return;
 
     e.preventDefault();
     isDragging.current = true;
     startPos.current = { x: e.clientX, y: e.clientY };
-    scrollStart.current = { 
-      left: element.scrollLeft, 
-      top: element.scrollTop 
+    scrollStart.current = {
+      left: element.scrollLeft,
+      top: element.scrollTop,
     };
 
-    element.style.cursor = 'grabbing';
-    element.style.userSelect = 'none';
-    
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    element.style.cursor = "grabbing";
+    element.style.userSelect = "none";
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   }, []);
 
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging.current) return;
-    
-    const element = elementRef.current;
-    if (!element) return;
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isDragging.current) return;
 
-    e.preventDefault();
-    
-    const deltaX = e.clientX - startPos.current.x;
-    const deltaY = e.clientY - startPos.current.y;
-    
-    if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
-      if (enableHorizontal) {
-        element.scrollLeft = scrollStart.current.left - deltaX;
+      const element = elementRef.current;
+      if (!element) return;
+
+      e.preventDefault();
+
+      const deltaX = e.clientX - startPos.current.x;
+      const deltaY = e.clientY - startPos.current.y;
+
+      if (
+        Math.abs(deltaX) > dragThreshold ||
+        Math.abs(deltaY) > dragThreshold
+      ) {
+        if (enableHorizontal) {
+          element.scrollLeft = scrollStart.current.left - deltaX;
+        }
+        if (enableVertical) {
+          element.scrollTop = scrollStart.current.top - deltaY;
+        }
       }
-      if (enableVertical) {
-        element.scrollTop = scrollStart.current.top - deltaY;
-      }
-    }
-  }, [dragThreshold, enableHorizontal, enableVertical]);
+    },
+    [dragThreshold, enableHorizontal, enableVertical]
+  );
 
   const handleMouseUp = useCallback(() => {
     if (!isDragging.current) return;
-    
+
     isDragging.current = false;
     const element = elementRef.current;
-    
+
     if (element) {
-      element.style.cursor = '';
-      element.style.userSelect = '';
+      element.style.cursor = "";
+      element.style.userSelect = "";
     }
-    
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
+
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 
-    element.style.cursor = 'grab';
-    element.addEventListener('mousedown', handleMouseDown);
-    
+    element.style.cursor = "grab";
+    element.addEventListener("mousedown", handleMouseDown);
+
     return () => {
-      element.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      element.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [handleMouseDown, handleMouseMove, handleMouseUp]);
 
@@ -113,10 +119,10 @@ const useEnhancedMouseWheel = (elementRef, options = {}) => {
       }
     };
 
-    element.addEventListener('wheel', handleWheel, { passive: false });
-    
+    element.addEventListener("wheel", handleWheel, { passive: false });
+
     return () => {
-      element.removeEventListener('wheel', handleWheel);
+      element.removeEventListener("wheel", handleWheel);
     };
   }, [enableHorizontalShift, scrollSpeed]);
 };
@@ -128,7 +134,7 @@ const useMiddleMouseScroll = (elementRef) => {
   const scrollIndicator = useRef(null);
 
   const createScrollIndicator = useCallback((x, y) => {
-    const indicator = document.createElement('div');
+    const indicator = document.createElement("div");
     indicator.style.cssText = `
       position: fixed;
       left: ${x - 15}px;
@@ -146,82 +152,88 @@ const useMiddleMouseScroll = (elementRef) => {
       pointer-events: none;
       user-select: none;
     `;
-    indicator.textContent = '↕';
+    indicator.textContent = "↕";
     document.body.appendChild(indicator);
     return indicator;
   }, []);
 
-  const handleMiddleMouseDown = useCallback((e) => {
-    if (e.button !== 1) return;
-    
-    const element = elementRef.current;
-    if (!element) return;
+  const handleMiddleMouseDown = useCallback(
+    (e) => {
+      if (e.button !== 1) return;
 
-    e.preventDefault();
-    isMiddleScrolling.current = true;
-    startPos.current = { x: e.clientX, y: e.clientY };
-    
-    scrollIndicator.current = createScrollIndicator(e.clientX, e.clientY);
-    
-    document.addEventListener('mousemove', handleMiddleMouseMove);
-    document.addEventListener('mouseup', handleMiddleMouseUp);
-  }, [createScrollIndicator]);
+      const element = elementRef.current;
+      if (!element) return;
+
+      e.preventDefault();
+      isMiddleScrolling.current = true;
+      startPos.current = { x: e.clientX, y: e.clientY };
+
+      scrollIndicator.current = createScrollIndicator(e.clientX, e.clientY);
+
+      document.addEventListener("mousemove", handleMiddleMouseMove);
+      document.addEventListener("mouseup", handleMiddleMouseUp);
+    },
+    [createScrollIndicator]
+  );
 
   const handleMiddleMouseMove = useCallback((e) => {
     if (!isMiddleScrolling.current) return;
-    
+
     const element = elementRef.current;
     if (!element) return;
 
     const deltaY = e.clientY - startPos.current.y;
     const deltaX = e.clientX - startPos.current.x;
-    
+
     const scrollSpeedY = deltaY * 0.1;
     const scrollSpeedX = deltaX * 0.1;
-    
+
     if (middleScrollInterval.current) {
       clearInterval(middleScrollInterval.current);
     }
-    
+
     middleScrollInterval.current = setInterval(() => {
       element.scrollTop += scrollSpeedY;
       element.scrollLeft += scrollSpeedX;
     }, 16);
   }, []);
 
-  const handleMiddleMouseUp = useCallback((e) => {
-    if (e.button !== 1) return;
-    
-    isMiddleScrolling.current = false;
-    
-    if (middleScrollInterval.current) {
-      clearInterval(middleScrollInterval.current);
-      middleScrollInterval.current = null;
-    }
-    
-    if (scrollIndicator.current) {
-      document.body.removeChild(scrollIndicator.current);
-      scrollIndicator.current = null;
-    }
-    
-    document.removeEventListener('mousemove', handleMiddleMouseMove);
-    document.removeEventListener('mouseup', handleMiddleMouseUp);
-  }, [handleMiddleMouseMove]);
+  const handleMiddleMouseUp = useCallback(
+    (e) => {
+      if (e.button !== 1) return;
+
+      isMiddleScrolling.current = false;
+
+      if (middleScrollInterval.current) {
+        clearInterval(middleScrollInterval.current);
+        middleScrollInterval.current = null;
+      }
+
+      if (scrollIndicator.current) {
+        document.body.removeChild(scrollIndicator.current);
+        scrollIndicator.current = null;
+      }
+
+      document.removeEventListener("mousemove", handleMiddleMouseMove);
+      document.removeEventListener("mouseup", handleMiddleMouseUp);
+    },
+    [handleMiddleMouseMove]
+  );
 
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 
-    element.addEventListener('mousedown', handleMiddleMouseDown);
-    element.addEventListener('auxclick', (e) => {
+    element.addEventListener("mousedown", handleMiddleMouseDown);
+    element.addEventListener("auxclick", (e) => {
       if (e.button === 1) e.preventDefault();
     });
-    
+
     return () => {
-      element.removeEventListener('mousedown', handleMiddleMouseDown);
-      document.removeEventListener('mousemove', handleMiddleMouseMove);
-      document.removeEventListener('mouseup', handleMiddleMouseUp);
-      
+      element.removeEventListener("mousedown", handleMiddleMouseDown);
+      document.removeEventListener("mousemove", handleMiddleMouseMove);
+      document.removeEventListener("mouseup", handleMiddleMouseUp);
+
       if (middleScrollInterval.current) {
         clearInterval(middleScrollInterval.current);
       }
@@ -249,19 +261,19 @@ const useKeyboardScroll = (elementRef, options = {}) => {
 
       if (enableArrows) {
         switch (e.key) {
-          case 'ArrowUp':
+          case "ArrowUp":
             element.scrollTop -= scrollAmount;
             handled = true;
             break;
-          case 'ArrowDown':
+          case "ArrowDown":
             element.scrollTop += scrollAmount;
             handled = true;
             break;
-          case 'ArrowLeft':
+          case "ArrowLeft":
             element.scrollLeft -= scrollAmount;
             handled = true;
             break;
-          case 'ArrowRight':
+          case "ArrowRight":
             element.scrollLeft += scrollAmount;
             handled = true;
             break;
@@ -270,11 +282,11 @@ const useKeyboardScroll = (elementRef, options = {}) => {
 
       if (enablePageKeys) {
         switch (e.key) {
-          case 'PageUp':
+          case "PageUp":
             element.scrollTop -= element.clientHeight * 0.9;
             handled = true;
             break;
-          case 'PageDown':
+          case "PageDown":
             element.scrollTop += element.clientHeight * 0.9;
             handled = true;
             break;
@@ -283,13 +295,13 @@ const useKeyboardScroll = (elementRef, options = {}) => {
 
       if (enableHomeEnd) {
         switch (e.key) {
-          case 'Home':
+          case "Home":
             if (e.ctrlKey) {
               element.scrollTop = 0;
               handled = true;
             }
             break;
-          case 'End':
+          case "End":
             if (e.ctrlKey) {
               element.scrollTop = element.scrollHeight;
               handled = true;
@@ -303,14 +315,14 @@ const useKeyboardScroll = (elementRef, options = {}) => {
       }
     };
 
-    if (!element.hasAttribute('tabindex')) {
-      element.setAttribute('tabindex', '0');
+    if (!element.hasAttribute("tabindex")) {
+      element.setAttribute("tabindex", "0");
     }
 
-    element.addEventListener('keydown', handleKeyDown);
-    
+    element.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      element.removeEventListener('keydown', handleKeyDown);
+      element.removeEventListener("keydown", handleKeyDown);
     };
   }, [scrollAmount, enableArrows, enablePageKeys, enableHomeEnd]);
 };
@@ -318,8 +330,8 @@ const useKeyboardScroll = (elementRef, options = {}) => {
 const Leaderboard = () => {
   const { user, getLeaderboard, getAllUsers, getGameStats } = useUser();
   const [leaderboardData, setLeaderboardData] = useState([]);
-  const [selectedGame, setSelectedGame] = useState('all');
-  const [viewMode, setViewMode] = useState('individual'); // 'individual' or 'overall'
+  const [selectedGame, setSelectedGame] = useState("all");
+  const [viewMode, setViewMode] = useState("individual"); // 'individual' or 'overall'
   const [stats, setStats] = useState(null);
 
   // Enhanced Scrolling Refs
@@ -330,97 +342,134 @@ const Leaderboard = () => {
 
   // Enhanced Scrolling Hooks
   const isDraggingList = useMouseDragScroll(leaderboardListRef);
-  const isDraggingStats = useMouseDragScroll(statsRef, { 
-    vertical: false, 
-    horizontal: true 
+  const isDraggingStats = useMouseDragScroll(statsRef, {
+    vertical: false,
+    horizontal: true,
   });
-  
-  useEnhancedMouseWheel(leaderboardListRef, { 
-    horizontalShift: true, 
-    speed: 1.2 
+
+  useEnhancedMouseWheel(leaderboardListRef, {
+    horizontalShift: true,
+    speed: 1.2,
   });
-  useEnhancedMouseWheel(statsRef, { 
-    horizontalShift: true, 
-    speed: 1 
+  useEnhancedMouseWheel(statsRef, {
+    horizontalShift: true,
+    speed: 1,
   });
-  
+
   useMiddleMouseScroll(leaderboardListRef);
   useMiddleMouseScroll(containerRef);
-  
-  useKeyboardScroll(leaderboardListRef, { 
+
+  useKeyboardScroll(leaderboardListRef, {
     scrollAmount: 80,
     arrows: true,
     pageKeys: true,
-    homeEnd: true
+    homeEnd: true,
   });
 
   const gameTypes = {
-    all: { name: 'All Games', icon: '🎯' },
-    mathQuiz: { name: 'Math Quiz', icon: '➕' },
-    scienceQuiz: { name: 'Science Quiz', icon: '🔬' },
-    wordGuessGame: { name: 'Word Game', icon: '🔤' },
-    geographyMapping: { name: 'Geography', icon: '🗺' },
-    labExperiments: { name: 'Lab Experiments', icon: '🧪' }
+    all: { name: "All Games", icon: "🎯" },
+    mathQuiz: { name: "Math Quiz", icon: "➕" },
+    scienceQuiz: { name: "Science Quiz", icon: "🔬" },
+    wordGuessGame: { name: "Word Game", icon: "🔤" },
+    geographyMapping: { name: "Geography", icon: "🗺" },
   };
+
+  const loadLeaderboard = useCallback(() => {
+    console.log("Loading leaderboard for:", { selectedGame, viewMode });
+
+    try {
+      if (viewMode === "overall") {
+        // Show overall user rankings based on total scores
+        const allUsers = getAllUsers();
+        console.log("Raw getAllUsers data:", allUsers);
+        const mappedData = allUsers.map((userData, index) => ({
+          rank: index + 1,
+          userName: userData.name,
+          userSchool: userData.school,
+          score: userData.totalScore,
+          isOverallRanking: true,
+          userId: userData.id,
+        }));
+        console.log("Overall leaderboard data:", mappedData);
+        setLeaderboardData(mappedData);
+      } else {
+        // Show game-specific leaderboard
+        console.log(
+          "Calling getLeaderboard with:",
+          selectedGame === "all" ? null : selectedGame
+        );
+        const gameLeaderboard = getLeaderboard(
+          selectedGame === "all" ? null : selectedGame,
+          100
+        );
+        console.log("Raw getLeaderboard data:", gameLeaderboard);
+
+        const mappedData = gameLeaderboard.map((score, index) => ({
+          ...score,
+          rank: index + 1,
+          isCurrentUser: score.userId === user?.id,
+        }));
+        console.log("Game-specific leaderboard data:", mappedData);
+        setLeaderboardData(mappedData);
+      }
+    } catch (error) {
+      console.error("Error loading leaderboard:", error);
+      setLeaderboardData([]);
+    }
+  }, [viewMode, selectedGame, getAllUsers, getLeaderboard, user?.id]);
+
+  const loadStats = useCallback(() => {
+    console.log("Loading stats for:", selectedGame);
+    const gameStats = getGameStats(
+      selectedGame === "all" ? null : selectedGame
+    );
+    console.log("Stats data:", gameStats);
+    setStats(gameStats);
+  }, [selectedGame, getGameStats]);
 
   useEffect(() => {
     loadLeaderboard();
     loadStats();
-  }, [selectedGame, viewMode]);
+  }, [loadLeaderboard, loadStats]);
 
-  const loadLeaderboard = () => {
-    if (viewMode === 'overall') {
-      // Show overall user rankings based on total scores
-      const allUsers = getAllUsers();
-      setLeaderboardData(allUsers.map((userData, index) => ({
-        rank: index + 1,
-        userName: userData.name,
-        userSchool: userData.school,
-        score: userData.totalScore,
-        gamesPlayed: userData.gamesPlayed,
-        isOverallRanking: true,
-        userId: userData.id
-      })));
-    } else {
-      // Show game-specific leaderboard
-      const gameLeaderboard = getLeaderboard(
-        selectedGame === 'all' ? null : selectedGame, 
-        100
-      );
-      
-      setLeaderboardData(gameLeaderboard.map((score, index) => ({
-        ...score,
-        rank: index + 1,
-        isCurrentUser: score.userId === user?.id
-      })));
-    }
-  };
+  // Debug effect to track selectedGame changes
+  useEffect(() => {
+    console.log("selectedGame state changed to:", selectedGame);
+  }, [selectedGame]);
 
-  const loadStats = () => {
-    const gameStats = getGameStats(selectedGame === 'all' ? null : selectedGame);
-    setStats(gameStats);
-  };
+  // Debug effect to track viewMode changes
+  useEffect(() => {
+    console.log("viewMode state changed to:", viewMode);
+  }, [viewMode]);
 
   const getRankIcon = (rank) => {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return `#${rank}`;
+      case 1:
+        return "🥇";
+      case 2:
+        return "🥈";
+      case 3:
+        return "🥉";
+      default:
+        return `#${rank}`;
     }
   };
 
   const getRankClass = (rank) => {
     switch (rank) {
-      case 1: return 'gold';
-      case 2: return 'silver';
-      case 3: return 'bronze';
-      default: return '';
+      case 1:
+        return "gold";
+      case 2:
+        return "silver";
+      case 3:
+        return "bronze";
+      default:
+        return "";
     }
   };
 
   const formatTime = (seconds) => {
-    if (!seconds) return '';
+    if (!seconds) return "";
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
@@ -428,52 +477,40 @@ const Leaderboard = () => {
 
   const getCurrentUserRank = () => {
     if (!user) return null;
-    const userEntry = leaderboardData.find(entry => entry.userId === user.id);
+    const userEntry = leaderboardData.find((entry) => entry.userId === user.id);
     return userEntry ? userEntry.rank : null;
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="leaderboard-container"
-      style={{ 
-        cursor: isDraggingList || isDraggingStats ? 'grabbing' : '',
-        touchAction: 'pan-y pan-x'
+      style={{
+        cursor: isDraggingList || isDraggingStats ? "grabbing" : "",
+        touchAction: "pan-y pan-x",
       }}
     >
       <div className="leaderboard-header">
         <h1 className="leaderboard-title">🏆 Leaderboard</h1>
-        <p className="leaderboard-subtitle">See how you rank against other players!</p>
+        <p className="leaderboard-subtitle">
+          See how you rank against other players!
+        </p>
       </div>
 
       {stats && (
-        <div 
+        <div
           ref={statsRef}
           className="global-stats"
-          style={{ 
-            cursor: isDraggingStats ? 'grabbing' : 'grab',
-            touchAction: 'pan-x'
+          style={{
+            cursor: isDraggingStats ? "grabbing" : "grab",
+            touchAction: "pan-x",
           }}
         >
-          <div className="stat-item">
-            <span className="stat-icon">🎮</span>
-            <div>
-              <div className="stat-number">{stats.totalGames}</div>
-              <div className="stat-label">Total Games</div>
-            </div>
-          </div>
           <div className="stat-item">
             <span className="stat-icon">👥</span>
             <div>
               <div className="stat-number">{stats.totalPlayers}</div>
               <div className="stat-label">Players</div>
-            </div>
-          </div>
-          <div className="stat-item">
-            <span className="stat-icon">📊</span>
-            <div>
-              <div className="stat-number">{stats.averageScore}</div>
-              <div className="stat-label">Avg Score</div>
             </div>
           </div>
           <div className="stat-item">
@@ -488,27 +525,32 @@ const Leaderboard = () => {
 
       <div className="controls-section">
         <div className="view-mode-toggle">
-          <button 
-            className={`toggle-btn ${viewMode === 'individual' ? 'active' : ''}`}
-            onClick={() => setViewMode('individual')}
+          <button
+            className={`toggle-btn ${
+              viewMode === "individual" ? "active" : ""
+            }`}
+            onClick={() => setViewMode("individual")}
           >
             🎯 Game Scores
           </button>
-          <button 
-            className={`toggle-btn ${viewMode === 'overall' ? 'active' : ''}`}
-            onClick={() => setViewMode('overall')}
+          <button
+            className={`toggle-btn ${viewMode === "overall" ? "active" : ""}`}
+            onClick={() => setViewMode("overall")}
           >
             👑 Overall Rankings
           </button>
         </div>
 
-        {viewMode === 'individual' && (
+        {viewMode === "individual" && (
           <div className="game-filter">
             <label htmlFor="gameSelect">Filter by Game:</label>
-            <select 
+            <select
               id="gameSelect"
-              value={selectedGame} 
-              onChange={(e) => setSelectedGame(e.target.value)}
+              value={selectedGame}
+              onChange={(e) => {
+                console.log("Dropdown changed to:", e.target.value);
+                setSelectedGame(e.target.value);
+              }}
               className="game-select"
             >
               {Object.entries(gameTypes).map(([key, game]) => (
@@ -525,17 +567,16 @@ const Leaderboard = () => {
         <div className="user-rank-highlight">
           <div className="rank-card current-user">
             <div className="rank-info">
-              <span className="rank-badge">Your Rank: {getRankIcon(getCurrentUserRank())}</span>
+              <span className="rank-badge">
+                Your Rank: {getRankIcon(getCurrentUserRank())}
+              </span>
               <span className="user-name">{user.name}</span>
             </div>
           </div>
         </div>
       )}
 
-      <div 
-        ref={contentRef}
-        className="leaderboard-content"
-      >
+      <div ref={contentRef} className="leaderboard-content">
         {leaderboardData.length === 0 ? (
           <div className="no-data">
             <div className="no-data-icon">🎮</div>
@@ -546,12 +587,12 @@ const Leaderboard = () => {
             </Link>
           </div>
         ) : (
-          <div 
+          <div
             ref={leaderboardListRef}
             className="leaderboard-list"
-            style={{ 
-              cursor: isDraggingList ? 'grabbing' : 'grab',
-              touchAction: 'pan-y pan-x'
+            style={{
+              cursor: isDraggingList ? "grabbing" : "grab",
+              touchAction: "pan-y pan-x",
             }}
             tabIndex={0}
             data-mode={viewMode}
@@ -560,27 +601,28 @@ const Leaderboard = () => {
               <div className="header-rank">Rank</div>
               <div className="header-player">Player</div>
               <div className="header-school">School</div>
-              {viewMode === 'individual' ? (
+              {viewMode === "individual" ? (
                 <>
                   <div className="header-score">Score</div>
-                  {selectedGame !== 'all' && <div className="header-time">Time</div>}
+                  {selectedGame !== "all" && (
+                    <div className="header-time">Time</div>
+                  )}
                   <div className="header-game">
-                    {selectedGame === 'all' ? 'Game' : 'Date'}
+                    {selectedGame === "all" ? "Game" : "Date"}
                   </div>
                 </>
               ) : (
                 <>
                   <div className="header-score">Total Score</div>
-                  <div className="header-games">Games Played</div>
                 </>
               )}
             </div>
 
             {leaderboardData.map((entry, index) => (
-              <div 
-                key={entry.userId || entry.id} 
+              <div
+                key={entry.userId || entry.id}
                 className={`leaderboard-row ${getRankClass(entry.rank)} ${
-                  entry.isCurrentUser ? 'current-user' : ''
+                  entry.isCurrentUser ? "current-user" : ""
                 }`}
                 data-mode={viewMode}
               >
@@ -589,7 +631,7 @@ const Leaderboard = () => {
                     {getRankIcon(entry.rank)}
                   </span>
                 </div>
-                
+
                 <div className="row-player">
                   <div className="player-info">
                     <span className="player-name">{entry.userName}</span>
@@ -598,12 +640,12 @@ const Leaderboard = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="row-school">
                   <span className="school-name">{entry.userSchool}</span>
                 </div>
 
-                {viewMode === 'individual' ? (
+                {viewMode === "individual" ? (
                   <>
                     <div className="row-score">
                       <div className="score-info">
@@ -612,21 +654,23 @@ const Leaderboard = () => {
                           <span className="score-max">/{entry.maxScore}</span>
                         )}
                         {entry.percentage && (
-                          <span className="score-percentage">({entry.percentage}%)</span>
+                          <span className="score-percentage">
+                            ({entry.percentage}%)
+                          </span>
                         )}
                       </div>
                     </div>
-                    
-                    {selectedGame !== 'all' && (
+
+                    {selectedGame !== "all" && (
                       <div className="row-time">
                         {formatTime(entry.timeTaken)}
                       </div>
                     )}
-                    
+
                     <div className="row-game">
-                      {selectedGame === 'all' ? (
+                      {selectedGame === "all" ? (
                         <span className="game-badge">
-                          {gameTypes[entry.gameType]?.icon || '🎯'} 
+                          {gameTypes[entry.gameType]?.icon || "🎯"}
                           {gameTypes[entry.gameType]?.name || entry.gameType}
                         </span>
                       ) : (
@@ -638,9 +682,6 @@ const Leaderboard = () => {
                   <>
                     <div className="row-score">
                       <span className="total-score">{entry.score}</span>
-                    </div>
-                    <div className="row-games">
-                      <span className="games-count">{entry.gamesPlayed}</span>
                     </div>
                   </>
                 )}

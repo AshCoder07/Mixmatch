@@ -10,28 +10,237 @@ import IndiaMap from "./assets/IndiaMap.png";
 import IndianRiverMap from "./assets/IndianRiverMap.png";
 import WorldMap from "./assets/WorldMap.png";
 import { useUser } from "./UserContext";
+import ConfettiExplosion from "react-confetti-explosion";
 
 // Updated coordinates based on the map screenshots
 const tamilNaduPoints = [
-  { name: "Chennai", tamil: "சென்னை", top: "11%", left: "70%" },
-  { name: "Coimbatore", tamil: "கோயம்புத்தூர்", top: "52%", left: "36%" },
-  { name: "Madurai", tamil: "மதுரை", top: "64%", left: "47%" },
-  { name: "Salem", tamil: "சேலம்", top: "35%", left: "47%" },
-  { name: "Trichy", tamil: "திருச்சி", top: "46%", left: "53%" },
-  { name: "Vellore", tamil: "வேலூர்", top: "14%", left: "57%" },
-  { name: "Tanjore", tamil: "தஞ்சாவூர்", top: "52%", left: "60.5%" },
-  { name: "Kanyakumari", tamil: "கன்னியாகுமரி", top: "95%", left: "41%" },
+  {
+    name: "Chennai",
+    tamil: "சென்னை",
+    top: "11%",
+    left: "70%",
+    coordinates: [
+      { top: "10%", left: "69%" }, // Northwestern Chennai
+      { top: "11%", left: "70%" }, // Central Chennai (original)
+      { top: "12%", left: "71%" }, // Southeastern Chennai
+      { top: "10%", left: "71%" }, // Northeastern Chennai
+      { top: "12%", left: "69%" }, // Southwestern Chennai
+    ],
+  },
+  {
+    name: "Coimbatore",
+    tamil: "கோயம்புத்தூர்",
+    top: "52%",
+    left: "36%",
+    coordinates: [
+      { top: "44%", left: "36%" }, // Maximum Northern Extension
+      { top: "45%", left: "36%" }, // Extended Northern Coimbatore
+      { top: "46%", left: "36%" }, // Further Northern Extension
+      { top: "47%", left: "36%" }, // Northern Extension
+      { top: "48%", left: "36%" }, // Further Northern Coimbatore
+      { top: "49%", left: "36%" }, // Northern Coimbatore
+      { top: "50%", left: "36%" }, // North-Central Coimbatore
+      { top: "51%", left: "36%" }, // Upper-Central Coimbatore
+      { top: "52%", left: "36%" }, // Central Coimbatore (original)
+      { top: "53%", left: "36%" }, // Lower-Central Coimbatore
+      { top: "54%", left: "36%" }, // South-Central Coimbatore
+      { top: "55%", left: "36%" }, // Southern Coimbatore
+      { top: "56%", left: "36%" }, // Further Southern Coimbatore
+      { top: "57%", left: "36%" }, // Extended Southern Coimbatore
+    ],
+  },
+  {
+    name: "Madurai",
+    tamil: "மதுரை",
+    top: "64%",
+    left: "47%",
+    coordinates: [
+      { top: "62%", left: "45%" }, // Northwestern Madurai
+      { top: "63%", left: "46%" }, // Northern Madurai
+      { top: "64%", left: "47%" }, // Central Madurai (original)
+      { top: "65%", left: "48%" }, // Southern Madurai
+      { top: "66%", left: "49%" }, // Southeastern Madurai
+      { top: "62%", left: "47%" }, // Northern Center Madurai
+      { top: "64%", left: "45%" }, // Western Madurai
+      { top: "64%", left: "49%" }, // Eastern Madurai
+      { top: "66%", left: "47%" }, // Southern Center Madurai
+    ],
+  },
+  {
+    name: "Salem",
+    tamil: "சேலம்",
+    top: "35%",
+    left: "47%",
+    coordinates: [
+      { top: "33%", left: "46%" }, // Northwestern Salem
+      { top: "35%", left: "47%" }, // Central Salem (original)
+      { top: "37%", left: "48%" }, // Southeastern Salem
+      { top: "35%", left: "45%" }, // Western Salem
+      { top: "35%", left: "49%" }, // Eastern Salem
+      { top: "35%", left: "50%" }, // Further Eastern Salem
+      { top: "35%", left: "51%" }, // Extended Eastern Salem
+      { top: "36%", left: "49%" }, // Southeast extension
+      { top: "37%", left: "50%" }, // Further Southeast extension
+      { top: "38%", left: "51%" }, // Extended Southeast area
+    ],
+  },
+  {
+    name: "Trichy",
+    tamil: "திருச்சி",
+    top: "46%",
+    left: "53%",
+    coordinates: [
+      { top: "45%", left: "52%" }, // Northwestern Trichy
+      { top: "46%", left: "53%" }, // Central Trichy (original)
+      { top: "47%", left: "54%" }, // Southeastern Trichy
+      { top: "45%", left: "53%" }, // Northern Trichy
+      { top: "47%", left: "53%" }, // Southern Trichy
+      { top: "44%", left: "54%" }, // Northeastern extension
+      { top: "43%", left: "55%" }, // Further Northeastern extension
+      { top: "48%", left: "52%" }, // Southwestern extension
+      { top: "49%", left: "51%" }, // Further Southwestern extension
+      { top: "50%", left: "50%" }, // Extended Southwestern area
+      { top: "51%", left: "49%" }, // Maximum Southwestern extension
+    ],
+  },
+  {
+    name: "Vellore",
+    tamil: "வேலூர்",
+    top: "14%",
+    left: "57%",
+    coordinates: [
+      { top: "14%", left: "55%" }, // Western Vellore
+      { top: "14%", left: "57%" }, // Central Vellore (original)
+      { top: "14%", left: "59%" }, // Eastern Vellore
+    ],
+  },
+  {
+    name: "Tanjore",
+    tamil: "தஞ்சாவூர்",
+    top: "52%",
+    left: "60.5%",
+    coordinates: [
+      { top: "51%", left: "60.5%" }, // Northern Tanjore
+      { top: "52%", left: "60.5%" }, // Central Tanjore (original)
+      { top: "53%", left: "60.5%" }, // Southern Tanjore
+    ],
+  },
+  {
+    name: "Kanyakumari",
+    tamil: "கன்னியாகுமரி",
+    top: "95%",
+    left: "41%",
+    coordinates: [
+      { top: "95%", left: "41%" }, // Central Kanyakumari (original)
+      { top: "95%", left: "42%" }, // Eastern Kanyakumari
+      { top: "95%", left: "43%" }, // Further Eastern Kanyakumari
+    ],
+  },
 ];
 
 const indiaPoints = [
   { name: "New Delhi", tamil: "புது டெல்லி", top: "32%", left: "42.5%" },
-  { name: "Maharashtra", tamil: "மஹாராஷ்ட்ரா", top: "61%", left: "36%" },
+  {
+    name: "Maharashtra",
+    tamil: "மஹாராஷ்ட்ரா",
+    top: "61%",
+    left: "36%",
+    coordinates: [
+      { top: "55%", left: "36%" }, // Northern Maharashtra
+      { top: "56%", left: "37%" }, // North-Central Maharashtra
+      { top: "57%", left: "38%" }, // Extended Northern Maharashtra
+      { top: "58%", left: "39%" }, // Further Northern Maharashtra
+      { top: "59%", left: "37%" }, // Upper-Central Maharashtra
+      { top: "60%", left: "36%" }, // Central-Upper Maharashtra
+      { top: "61%", left: "36%" }, // Central Maharashtra (original)
+      { top: "62%", left: "36%" }, // Southern Maharashtra
+      { top: "55%", left: "38%" }, // Northeastern Maharashtra
+      { top: "56%", left: "39%" }, // Extended Northeastern Maharashtra
+      { top: "57%", left: "40%" }, // Further Northeastern Maharashtra
+      { top: "58%", left: "41%" }, // Maximum Northeastern Maharashtra
+      { top: "61%", left: "38%" }, // Southeastern Maharashtra
+      { top: "62%", left: "39%" }, // Extended Southeastern Maharashtra
+      { top: "63%", left: "40%" }, // Further Southeastern Maharashtra
+      { top: "64%", left: "41%" }, // Maximum Southeastern Maharashtra
+      { top: "59%", left: "42%" }, // Eastern Maharashtra
+      { top: "60%", left: "43%" }, // Extended Eastern Maharashtra
+      { top: "61%", left: "44%" }, // Maximum Eastern Maharashtra (increased southeast east space)
+    ],
+  },
   { name: "TamilNadu", tamil: "தமிழ்நாடு", top: "83%", left: "44%" },
-  { name: "WestBengal", tamil: "மேற்கு வங்காளம்", top: "48%", left: "60%" },
-  { name: "Karnataka", tamil: "கர்நாடகா", top: "72%", left: "39%" },
+  {
+    name: "WestBengal",
+    tamil: "மேற்கு வங்காளம்",
+    top: "48%",
+    left: "60%",
+    coordinates: [
+      { top: "42%", left: "56%" }, // Top Left West Bengal (maximum northwestern extension)
+      { top: "43%", left: "57%" }, // Extended Top Left West Bengal
+      { top: "44%", left: "56%" }, // Further Top Left West Bengal
+      { top: "44%", left: "58%" }, // Upper Northwestern West Bengal
+      { top: "45%", left: "58%" }, // Northern West Bengal (Darjeeling area)
+      { top: "48%", left: "60%" }, // Central West Bengal (Kolkata area)
+      { top: "51%", left: "59%" }, // Southern West Bengal
+      { top: "47%", left: "61%" }, // Eastern West Bengal
+      { top: "49%", left: "57%" }, // Western West Bengal
+      { top: "46%", left: "59%" }, // Additional central area
+      { top: "43%", left: "55%" }, // Extended Northwestern West Bengal
+      { top: "45%", left: "55%" }, // Further Northwestern West Bengal
+      { top: "46%", left: "56%" }, // Additional Northwestern coverage
+    ],
+  },
+  {
+    name: "Karnataka",
+    tamil: "கர்நாடகா",
+    top: "72%",
+    left: "39%",
+    coordinates: [
+      { top: "70%", left: "39%" }, // Northern Karnataka
+      { top: "71%", left: "39%" }, // Upper-Central Karnataka
+      { top: "72%", left: "39%" }, // Central Karnataka (original)
+      { top: "73%", left: "39%" }, // Lower-Central Karnataka
+      { top: "74%", left: "39%" }, // Southern Karnataka
+      { top: "75%", left: "39%" }, // Extended Southern Karnataka
+      { top: "76%", left: "39%" }, // Maximum Southern Karnataka (increased bottom space)
+      { top: "72%", left: "37%" }, // Western Karnataka
+      { top: "72%", left: "41%" }, // Eastern Karnataka
+      { top: "74%", left: "37%" }, // Southwestern Karnataka
+      { top: "74%", left: "41%" }, // Southeastern Karnataka
+    ],
+  },
   { name: "Telangana", tamil: "தெலங்கானா", top: "65%", left: "45%" },
-  { name: "Rajasthan", tamil: "ராஜஸ்தான்", top: "39%", left: "37%" },
-  { name: "Goa", tamil: "கோவா", top: "70%", left: "36%" },
+  {
+    name: "Rajasthan",
+    tamil: "ராஜஸ்தான்",
+    top: "39%",
+    left: "37%",
+    coordinates: [
+      { top: "39%", left: "32%" }, // Western Rajasthan (maximum left extension)
+      { top: "39%", left: "33%" }, // Extended Western Rajasthan
+      { top: "39%", left: "34%" }, // Further Western Rajasthan
+      { top: "39%", left: "35%" }, // Western-Central Rajasthan
+      { top: "39%", left: "36%" }, // Central-Western Rajasthan
+      { top: "39%", left: "37%" }, // Central Rajasthan (original)
+      { top: "38%", left: "34%" }, // Northern Western Rajasthan
+      { top: "40%", left: "34%" }, // Southern Western Rajasthan
+      { top: "37%", left: "35%" }, // Upper Western Rajasthan
+      { top: "41%", left: "35%" }, // Lower Western Rajasthan
+    ],
+  },
+  {
+    name: "Goa",
+    tamil: "கோவா",
+    top: "70%",
+    left: "36%",
+    coordinates: [
+      { top: "68%", left: "36%" }, // Northern Goa
+      { top: "69%", left: "36%" }, // Upper-Central Goa
+      { top: "70%", left: "36%" }, // Central Goa (original)
+      { top: "70.5%", left: "36%" }, // Slightly Southern Goa (reduced south space)
+      { top: "69%", left: "35%" }, // Western Goa
+      { top: "69%", left: "37%" }, // Eastern Goa
+    ],
+  },
 ];
 
 const riverPoints = [
@@ -46,10 +255,75 @@ const riverPoints = [
 
 const worldPoints = [
   { name: "India", tamil: "இந்தியா", top: "55%", left: "68%" },
-  { name: "USA", tamil: "அமெரிக்கா", top: "40%", left: "20%" },
+  {
+    name: "USA",
+    tamil: "அமெரிக்கா",
+    top: "40%",
+    left: "20%",
+    coordinates: [
+      { top: "40%", left: "18%" }, // Western USA (Pacific Coast)
+      { top: "40%", left: "19%" }, // Western-Central USA
+      { top: "40%", left: "20%" }, // Central USA (original)
+      { top: "40%", left: "21%" }, // Central-Eastern USA
+      { top: "40%", left: "22%" }, // Eastern USA
+      { top: "40%", left: "23%" }, // Extended Eastern USA
+      { top: "40%", left: "24%" }, // Maximum Eastern USA (Atlantic Coast)
+      { top: "38%", left: "22%" }, // Northern Eastern USA
+      { top: "42%", left: "22%" }, // Southern Eastern USA
+      { top: "39%", left: "24%" }, // Northeastern USA
+      { top: "41%", left: "24%" }, // Southeastern USA (increased right side space)
+    ],
+  },
   { name: "Australia", tamil: "ஆஸ்திரேலியா", top: "77%", left: "82%" },
-  { name: "China", tamil: "சீனா", top: "44%", left: "73%" },
-  { name: "Brazil", tamil: "பிரேசில்", top: "70%", left: "30%" },
+  {
+    name: "China",
+    tamil: "சீனா",
+    top: "44%",
+    left: "73%",
+    coordinates: [
+      { top: "40%", left: "70%" }, // Northwestern China (Xinjiang)
+      { top: "41%", left: "71%" }, // Western China
+      { top: "42%", left: "72%" }, // West-Central China
+      { top: "43%", left: "73%" }, // Upper-Central China
+      { top: "44%", left: "73%" }, // Central China (original - Beijing area)
+      { top: "45%", left: "73%" }, // Lower-Central China
+      { top: "46%", left: "74%" }, // Southern China
+      { top: "47%", left: "75%" }, // Southeastern China (Guangzhou area)
+      { top: "42%", left: "75%" }, // Eastern China (Shanghai area)
+      { top: "43%", left: "76%" }, // Northeastern China (Manchuria)
+      { top: "41%", left: "74%" }, // Northern China
+      { top: "45%", left: "71%" }, // Southwestern China (Tibet)
+      { top: "48%", left: "73%" }, // Far Southern China (Hong Kong area)
+    ],
+  },
+  {
+    name: "Brazil",
+    tamil: "பிரேசில்",
+    top: "70%",
+    left: "30%",
+    coordinates: [
+      { top: "65%", left: "28%" }, // Northwestern Brazil (Amazon region)
+      { top: "66%", left: "30%" }, // Northern Brazil
+      { top: "67%", left: "32%" }, // Northeastern Brazil
+      { top: "68%", left: "34%" }, // Extended Northeastern Brazil
+      { top: "69%", left: "30%" }, // North-Central Brazil
+      { top: "70%", left: "30%" }, // Central Brazil (original - Brasília area)
+      { top: "71%", left: "32%" }, // Central-Eastern Brazil
+      { top: "72%", left: "34%" }, // Eastern Brazil (coastal region)
+      { top: "73%", left: "36%" }, // Southeastern Brazil (Rio/São Paulo)
+      { top: "74%", left: "32%" }, // Southern Brazil
+      { top: "75%", left: "30%" }, // Far Southern Brazil
+      { top: "76%", left: "28%" }, // Extended Southern Brazil
+      { top: "77%", left: "30%" }, // Maximum Southern Brazil (extended down)
+      { top: "70%", left: "32%" }, // Eastern expansion
+      { top: "70%", left: "34%" }, // Further Eastern expansion
+      { top: "70%", left: "36%" }, // Maximum Eastern expansion (right side)
+      { top: "72%", left: "28%" }, // Western Brazil coverage
+      { top: "74%", left: "30%" }, // South-Central Brazil
+      { top: "75%", left: "32%" }, // South-Eastern Brazil
+      { top: "76%", left: "34%" }, // Maximum Southeast (right and down)
+    ],
+  },
   { name: "South Africa", tamil: "தென்னாப்பிரிக்கா", top: "78%", left: "52%" },
   { name: "Egypt", tamil: "எகிப்து", top: "48%", left: "48%" },
 ];
@@ -78,10 +352,46 @@ const GeographyGame = () => {
     correct: null,
     wrong: null,
   });
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const timerRef = useRef(null);
   const notificationRef = useRef(null);
   const mapElementRef = useRef(null);
+  // Keep latest score for reliable saving
+  const scoreRef = useRef(score);
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
+  // Keep latest gameResults for reliable access
+  useEffect(() => {
+    gameResultsRef.current = gameResults;
+  }, [gameResults]);
+
+  // Track if score has been saved to prevent duplicates
+  const scoreSavedRef = useRef(false);
+
+  // Track component instance for debugging
+  const componentIdRef = useRef(
+    `geo_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`
+  );
+
+  // Store gameResults in ref to access latest value without state callback
+  const gameResultsRef = useRef([]);
+
+  // Log component mount/unmount
+  useEffect(() => {
+    console.log(
+      "🟢 GeographyMapping MOUNTED - Component ID:",
+      componentIdRef.current
+    );
+    return () => {
+      console.log(
+        "🔴 GeographyMapping UNMOUNTED - Component ID:",
+        componentIdRef.current
+      );
+    };
+  }, []);
 
   // Add refs to store current values for timer callbacks
   const currentMapRef = useRef(currentMap);
@@ -323,17 +633,80 @@ const GeographyGame = () => {
       if (!mapElement) return;
 
       const rect = mapElement.getBoundingClientRect();
-      const targetX = (parseFloat(currentPoint.left) / 100) * rect.width;
-      const targetY = (parseFloat(currentPoint.top) / 100) * rect.height;
 
-      const distance = Math.sqrt(
-        Math.pow(clickX - targetX, 2) + Math.pow(clickY - targetY, 2)
-      );
-
-      // Responsive tolerance
+      // Responsive tolerance with enhanced tolerance for larger areas
       const baseSize = Math.min(rect.width, rect.height);
-      const tolerance = Math.max(baseSize * 0.06, 40);
-      const isCorrect = distance <= tolerance;
+      let tolerance = Math.max(baseSize * 0.06, 40);
+
+      // Increase tolerance for areas with multiple coordinates
+      if (currentPoint.coordinates) {
+        tolerance = Math.max(baseSize * 0.08, 50);
+      }
+
+      // Reduce tolerance for precise locations like Kanyakumari
+      if (currentPoint.precise) {
+        tolerance = Math.max(baseSize * 0.04, 25);
+      }
+
+      // Special reduced east-west tolerance for Coimbatore
+      if (currentPoint.name === "Coimbatore") {
+        tolerance = Math.max(baseSize * 0.05, 35);
+      }
+
+      // Small centered area for Chennai
+      if (currentPoint.name === "Chennai") {
+        tolerance = Math.max(baseSize * 0.04, 30);
+      }
+
+      // Reduced area for Trichy to prevent side city conflicts
+      if (currentPoint.name === "Trichy") {
+        tolerance = Math.max(baseSize * 0.05, 35);
+      }
+
+      // Increased area for Madurai
+      if (currentPoint.name === "Madurai") {
+        tolerance = Math.max(baseSize * 0.07, 45);
+      }
+
+      // Reduced left-right area for Tanjore
+      if (currentPoint.name === "Tanjore") {
+        tolerance = Math.max(baseSize * 0.04, 30);
+      }
+
+      // Very precise single point for New Delhi
+      if (currentPoint.name === "New Delhi") {
+        tolerance = Math.max(baseSize * 0.025, 20);
+      }
+
+      let isCorrect = false;
+      let bestDistance = Infinity;
+      let bestTarget = null;
+
+      // Check multiple coordinates if available
+      const coordinatesToCheck = currentPoint.coordinates || [
+        { top: currentPoint.top, left: currentPoint.left },
+      ];
+
+      coordinatesToCheck.forEach((coord) => {
+        if (coord.left && coord.top) {
+          const targetX = (parseFloat(coord.left) / 100) * rect.width;
+          const targetY = (parseFloat(coord.top) / 100) * rect.height;
+
+          const distance = Math.sqrt(
+            Math.pow(clickX - targetX, 2) + Math.pow(clickY - targetY, 2)
+          );
+
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestTarget = coord;
+          }
+
+          if (distance <= tolerance) {
+            isCorrect = true;
+          }
+        }
+      });
+
       const timeTaken = 40 - timeLeft;
 
       // Calculate clicked position as percentage
@@ -343,6 +716,10 @@ const GeographyGame = () => {
       if (isCorrect) {
         setScore((s) => s + 10);
         showNotification(texts[language].correct, "success");
+
+        // Show confetti for correct answer
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 1000);
 
         // Show green marker at clicked position
         setShowingAnswers({
@@ -356,7 +733,7 @@ const GeographyGame = () => {
       } else {
         showNotification(texts[language].incorrect, "error");
 
-        // Show red marker at clicked position and blue marker at correct position
+        // Show red marker at clicked position and blue marker at best correct position
         setShowingAnswers({
           wrong: {
             x: clickedPercentX,
@@ -364,8 +741,8 @@ const GeographyGame = () => {
             name: "Wrong",
           },
           correct: {
-            x: parseFloat(currentPoint.left),
-            y: parseFloat(currentPoint.top),
+            x: parseFloat(bestTarget?.left || currentPoint.left),
+            y: parseFloat(bestTarget?.top || currentPoint.top),
             name: currentPoint[language] || currentPoint.name,
           },
         });
@@ -402,6 +779,93 @@ const GeographyGame = () => {
     ]
   );
 
+  // FIXED endGame function - Use refs to avoid React state callback issues
+  const endGame = useCallback(() => {
+    stopTimer();
+
+    // Use setTimeout to ensure gameResults state has been updated
+    setTimeout(() => {
+      setGameState("completed");
+
+      // Only save score once using ref flag
+      console.log("🔍 endGame - Checking scoreSavedRef:", {
+        componentId: componentIdRef.current,
+        scoreSavedRef: scoreSavedRef.current,
+        hasUser: !!user,
+        hasSaveScore: !!saveScore,
+      });
+
+      if (user && saveScore && !scoreSavedRef.current) {
+        console.log("✅ endGame - Proceeding to save (flag is false)");
+        scoreSavedRef.current = true; // Mark as saved immediately
+        console.log("🚩 endGame - Set scoreSavedRef to TRUE");
+
+        // Generate unique save ID ONCE
+        const saveId = `save_${Date.now()}_${Math.random()
+          .toString(36)
+          .substr(2, 9)}`;
+
+        try {
+          // CRITICAL FIX: Access gameResults from REF instead of state callback
+          // This prevents React from calling our save logic multiple times
+          const latestResults = gameResultsRef.current;
+          const currentMapConfig = getCurrentMapConfig();
+          const totalQuestions = currentMapConfig.points.length;
+
+          // Count correct answers directly from results to ensure accuracy
+          const countCorrect = latestResults.filter((r) => r.correct).length;
+
+          // Calculate total time taken
+          const totalTimeTaken = latestResults.reduce(
+            (sum, result) => sum + (result.timeTaken || 0),
+            0
+          );
+
+          console.log("Geography Mapping - Saving score (ONCE):", {
+            saveId,
+            gameType: "geographyMapping",
+            countCorrect,
+            totalQuestions,
+            resultsLength: latestResults.length,
+            percentage: Math.round((countCorrect / totalQuestions) * 100),
+            totalTimeTaken,
+            userName: user.name,
+            allResults: latestResults.map((r) => ({
+              question: r.questionDisplay,
+              correct: r.correct,
+            })),
+          });
+
+          // Save as counts so MyScores shows 8/8, 100%, and totals match per map
+          saveScore(
+            "geographyMapping",
+            countCorrect,
+            user.name,
+            totalTimeTaken,
+            totalQuestions
+          );
+          console.log(
+            "Geography Mapping - saveScore called with saveId:",
+            saveId
+          );
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      } else if (scoreSavedRef.current) {
+        console.log(
+          "⛔ Geography Mapping - Score already saved, skipping duplicate",
+          {
+            componentId: componentIdRef.current,
+          }
+        );
+      } else {
+        console.log(
+          "⚠️ Geography Mapping - Not saving (missing user or saveScore)"
+        );
+      }
+    }, 100); // Small delay to ensure state is updated
+  }, [user, saveScore, stopTimer, getCurrentMapConfig]);
+
   // Next question
   const nextQuestion = useCallback(() => {
     const currentMapConfig = getCurrentMapConfig();
@@ -417,7 +881,7 @@ const GeographyGame = () => {
       setIsAnswered(false);
       startTimer();
     }
-  }, [currentQuestionIndex, getCurrentMapConfig, startTimer]);
+  }, [currentQuestionIndex, getCurrentMapConfig, startTimer, endGame]);
 
   // Game functions
   const startGame = useCallback(
@@ -425,6 +889,13 @@ const GeographyGame = () => {
       if (!mapConfigs[mapKey]) {
         mapKey = "india";
       }
+
+      // Reset score saved flag for new game
+      console.log("🔄 startGame - Resetting scoreSavedRef to FALSE", {
+        componentId: componentIdRef.current,
+        mapKey,
+      });
+      scoreSavedRef.current = false;
 
       setCurrentMap(mapKey);
       setGameState("playing");
@@ -441,36 +912,15 @@ const GeographyGame = () => {
     [startTimer, mapConfigs]
   );
 
-  // FIXED endGame function - This is the key fix
-  const endGame = useCallback(() => {
-    stopTimer();
-    setGameState("completed");
-
-    if (user && saveScore) {
-      try {
-        // Calculate correct answers from game results
-        const correctAnswers = gameResults.filter((r) => r.correct).length;
-        const currentMapConfig = getCurrentMapConfig();
-        const totalQuestions = currentMapConfig.points.length;
-        
-        // Calculate percentage based on correct answers (not points)
-        const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-        
-        // Calculate total time taken
-        const totalTimeTaken = gameResults.reduce((sum, result) => sum + (result.timeTaken || 0), 0);
-        
-        // Save the percentage as the score - this ensures 100% shows as 100%
-        // Use only basic parameters that your saveScore function expects
-        saveScore("geographyMapping", percentage, user.name);
-        
-      } catch (error) {
-        console.error("Error saving score:", error);
-      }
-    }
-  }, [user, saveScore, stopTimer, getCurrentMapConfig, gameResults]);
-
   const resetGame = useCallback(() => {
     stopTimer();
+
+    // Reset score saved flag
+    console.log("🔄 resetGame - Resetting scoreSavedRef to FALSE", {
+      componentId: componentIdRef.current,
+    });
+    scoreSavedRef.current = false;
+
     setGameState("menu");
     setCurrentMap("india");
     setCurrentQuestionIndex(0);
@@ -521,21 +971,21 @@ const GeographyGame = () => {
   // Optimized styles for viewboard without scroll
   const getViewboardStyles = () => ({
     container: {
-      height: "100vh",
+      height: "90vh",
       width: "100vw",
       fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
       overflow: "hidden",
     },
     gameWrapper: {
       display: "flex",
-      height: "100vh",
+      height: "90vh",
       width: "100vw",
     },
     sidebar: {
       width: "25vw",
       minWidth: "300px",
       maxWidth: "380px",
-      height: "100vh",
+      height: "90vh",
       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
       padding: "1.5vh 1vw",
       overflowY: "auto",
@@ -545,15 +995,15 @@ const GeographyGame = () => {
     },
     mapArea: {
       flex: 1,
-      height: "100vh",
+      height: "90vh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       padding: "1vh",
     },
     mapDisplay: {
-      width: "95%",
-      height: "95%",
+      width: "85%",
+      height: "85%",
       borderRadius: "12px",
       border: "2px solid rgba(255,255,255,0.3)",
       boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
@@ -567,121 +1017,139 @@ const GeographyGame = () => {
   // Menu Screen
   if (gameState === "menu") {
     return (
-      <div style={styles.container}>
-        <div
-          style={{
-            padding: "2vh 2vw",
-            textAlign: "center",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "min(8vh, 6vw)",
-              color: "white",
-              marginBottom: "2vh",
-              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            }}
+      <>
+        {showConfetti && (
+          <div
+            style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
           >
-            {texts[language].title}
-          </h1>
-
-          <div style={{ marginBottom: "3vh" }}>
-            <button
-              onClick={() =>
-                setLanguage(language === "english" ? "tamil" : "english")
-              }
-              style={{
-                background: "rgba(255,255,255,0.9)",
-                color: "#2d3748",
-                border: "none",
-                padding: "1vh 2vw",
-                borderRadius: "25px",
-                fontSize: "min(3vh, 2vw)",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              {texts[language].language}
-            </button>
+            <ConfettiExplosion
+              force={0.8}
+              duration={3000}
+              particleCount={150}
+              width={1600}
+            />
           </div>
-
-          {user && (
-            <div style={{ marginBottom: "2vh" }}>
-              <p
-                style={{
-                  fontSize: "min(3vh, 2.5vw)",
-                  fontWeight: "bold",
-                  color: "white",
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "1vh 2vw",
-                  borderRadius: "25px",
-                  display: "inline-block",
-                }}
-              >
-                Welcome, {user.name}!
-              </p>
-            </div>
-          )}
-
+        )}
+        <div style={styles.container}>
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "2vw",
-              maxWidth: "80vw",
-              margin: "0 auto",
+              padding: "2vh 2vw",
+              textAlign: "center",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              minHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              overflow: "auto",
+              paddingBottom: "4vh",
             }}
           >
-            {Object.entries(mapConfigs).map(([key, config]) => (
-              <div
-                key={key}
-                onClick={() => startGame(key)}
+            <h1
+              style={{
+                fontSize: "min(8vh, 6vw)",
+                color: "white",
+                marginBottom: "2vh",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
+              {texts[language].title}
+            </h1>
+
+            <div style={{ marginBottom: "3vh" }}>
+              <button
+                onClick={() =>
+                  setLanguage(language === "english" ? "tamil" : "english")
+                }
                 style={{
                   background: "rgba(255,255,255,0.9)",
-                  borderRadius: "15px",
-                  padding: "2vh 1vw",
+                  color: "#2d3748",
+                  border: "none",
+                  padding: "1vh 2vw",
+                  borderRadius: "25px",
+                  fontSize: "min(3vh, 2vw)",
+                  fontWeight: "bold",
                   cursor: "pointer",
-                  transition: "transform 0.2s ease",
-                  textAlign: "center",
-                  minHeight: "20vh",
                 }}
-                onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
               >
-                <h3
+                {texts[language].language}
+              </button>
+            </div>
+
+            {user && (
+              <div style={{ marginBottom: "2vh" }}>
+                <p
                   style={{
-                    fontSize: "min(3vh, 2vw)",
-                    color: "#2d3748",
-                    marginBottom: "2vh",
-                  }}
-                >
-                  {config.name[language]}
-                </h3>
-                <div style={{ fontSize: "6vh", marginBottom: "2vh" }}>🗺</div>
-                <div
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-                    color: "white",
-                    padding: "1vh 2vw",
-                    borderRadius: "20px",
-                    fontSize: "min(2.5vh, 1.8vw)",
+                    fontSize: "min(3vh, 2.5vw)",
                     fontWeight: "bold",
+                    color: "white",
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "1vh 2vw",
+                    borderRadius: "25px",
+                    display: "inline-block",
                   }}
                 >
-                  {texts[language].startGame}
-                </div>
+                  Welcome, {user.name}!
+                </p>
               </div>
-            ))}
+            )}
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "2vw",
+                maxWidth: "80vw",
+                margin: "0 auto",
+                paddingBottom: "2vh",
+              }}
+            >
+              {Object.entries(mapConfigs).map(([key, config]) => (
+                <div
+                  key={key}
+                  onClick={() => startGame(key)}
+                  style={{
+                    background: "rgba(255,255,255,0.9)",
+                    borderRadius: "15px",
+                    padding: "1.5vh 1vw",
+                    cursor: "pointer",
+                    transition: "transform 0.2s ease",
+                    textAlign: "center",
+                    minHeight: "16vh",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.target.style.transform = "scale(1.05)")
+                  }
+                  onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+                >
+                  <h3
+                    style={{
+                      fontSize: "min(3vh, 2vw)",
+                      color: "#2d3748",
+                      marginBottom: "2vh",
+                    }}
+                  >
+                    {config.name[language]}
+                  </h3>
+                  <div style={{ fontSize: "6vh", marginBottom: "2vh" }}>🗺</div>
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                      color: "white",
+                      padding: "1vh 2vw",
+                      borderRadius: "20px",
+                      fontSize: "min(2.5vh, 1.8vw)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {texts[language].startGame}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -689,9 +1157,16 @@ const GeographyGame = () => {
   if (gameState === "completed") {
     const correctAnswers = gameResults.filter((r) => r.correct).length;
     const totalQuestions = gameResults.length;
-    const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    const totalTime = gameResults.reduce((sum, result) => sum + (result.timeTaken || 0), 0);
-    const avgTime = totalQuestions > 0 ? Math.round(totalTime / totalQuestions) : 0;
+    const percentage =
+      totalQuestions > 0
+        ? Math.round((correctAnswers / totalQuestions) * 100)
+        : 0;
+    const totalTime = gameResults.reduce(
+      (sum, result) => sum + (result.timeTaken || 0),
+      0
+    );
+    const avgTime =
+      totalQuestions > 0 ? Math.round(totalTime / totalQuestions) : 0;
 
     let performanceLevel = "";
     if (percentage >= 80) {
@@ -704,439 +1179,334 @@ const GeographyGame = () => {
 
     // Report Component - Truly Fixed Screen Layout (No Scroll)
     const ReportScreen = () => (
-      <div
-        style={{
-          height: "100vh",
-          width: "100vw",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          padding: "1vh 1vw",
-        }}
-      >
-        {/* Compact Header */}
+      <>
+        {showConfetti && (
+          <div
+            style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
+          >
+            <ConfettiExplosion
+              force={0.8}
+              duration={3000}
+              particleCount={150}
+              width={1600}
+            />
+          </div>
+        )}
         <div
           style={{
-            textAlign: "center",
-            marginBottom: "1vh",
-            height: "8vh",
+            height: "100vh",
+            width: "100vw",
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            overflow: "hidden",
+            padding: "1vh 1vw",
           }}
         >
-          <h2
-            style={{
-              fontSize: "min(3.5vh, 2.5vw)",
-              color: "white",
-              margin: 0,
-              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            }}
-          >
-            {texts[language].participationReport}
-          </h2>
+          {/* Compact Header */}
           <div
             style={{
-              fontSize: "min(2vh, 1.5vw)",
-              color: "rgba(255,255,255,0.9)",
-              fontWeight: "bold",
-            }}
-          >
-            Student: {user?.name || "Unknown"}
-          </div>
-        </div>
-
-        {/* Main Content Area - Fixed Height */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            gap: "1vw",
-            height: "82vh",
-            maxHeight: "82vh",
-            minHeight: "82vh",
-          }}
-        >
-          {/* Left Panel - Statistics (40% width) */}
-          <div
-            style={{
-              width: "40%",
-              background: "rgba(255,255,255,0.95)",
-              borderRadius: "12px",
-              padding: "1.5vh 1vw",
+              textAlign: "center",
+              marginBottom: "1vh",
+              height: "8vh",
               display: "flex",
               flexDirection: "column",
-              overflow: "hidden",
+              justifyContent: "center",
             }}
           >
-            {/* Stats Grid - Compact */}
-            <div
+            <h2
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "1vh",
-                marginBottom: "1.5vh",
-                height: "20vh",
-              }}
-            >
-              <div
-                style={{
-                  background: "#4CAF50",
-                  color: "white",
-                  padding: "1vh",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
-                  Correct
-                </div>
-                <div
-                  style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
-                >
-                  {correctAnswers}/{totalQuestions}
-                </div>
-              </div>
-
-              <div
-                style={{
-                  background: "#2196F3",
-                  color: "white",
-                  padding: "1vh",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
-                  Accuracy
-                </div>
-                <div
-                  style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
-                >
-                  {percentage}%
-                </div>
-              </div>
-
-              <div
-                style={{
-                  background: "#FF9800",
-                  color: "white",
-                  padding: "1vh",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
-                  Total Time
-                </div>
-                <div
-                  style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
-                >
-                  {totalTime}s
-                </div>
-              </div>
-
-              <div
-                style={{
-                  background: "#9C27B0",
-                  color: "white",
-                  padding: "1vh",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
-                  Avg/Q
-                </div>
-                <div
-                  style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
-                >
-                  {avgTime}s
-                </div>
-              </div>
-            </div>
-
-            {/* Performance Banner - Compact */}
-            <div
-              style={{
-                background:
-                  percentage >= 80
-                    ? "#4CAF50"
-                    : percentage >= 60
-                    ? "#FF9800"
-                    : "#f44336",
+                fontSize: "min(3.5vh, 2.5vw)",
                 color: "white",
-                padding: "2vh 1vw",
-                borderRadius: "12px",
-                textAlign: "center",
-                height: "8vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                margin: 0,
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
               }}
             >
-              <div
-                style={{ fontSize: "min(2.5vh, 1.8vw)", fontWeight: "bold" }}
-              >
-                {performanceLevel}
-              </div>
+              {texts[language].participationReport}
+            </h2>
+            <div
+              style={{
+                fontSize: "min(2vh, 1.5vw)",
+                color: "rgba(255,255,255,0.9)",
+                fontWeight: "bold",
+              }}
+            >
+              Student: {user?.name || "Unknown"}
             </div>
           </div>
 
-          {/* Right Panel - Question Details (60% width) */}
+          {/* Main Content Area - Fixed Height */}
           <div
             style={{
-              width: "60%",
-              background: "rgba(255,255,255,0.95)",
-              borderRadius: "12px",
-              padding: "1.5vh 1vw",
+              flex: 1,
               display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
+              gap: "1vw",
+              height: "82vh",
+              maxHeight: "82vh",
+              minHeight: "82vh",
             }}
           >
-            <h3
-              style={{
-                color: "#2d3748",
-                marginBottom: "1vh",
-                fontSize: "min(2.5vh, 1.8vw)",
-                textAlign: "center",
-                height: "4vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              Question Details
-            </h3>
-
-            {/* Fixed height container for questions */}
+            {/* Left Panel - Statistics (40% width) */}
             <div
               style={{
-                height: "calc(100% - 5vh)",
-                display: "grid",
-                gridTemplateRows: `repeat(${Math.min(
-                  gameResults.length,
-                  8
-                )}, 1fr)`,
-                gap: "0.5vh",
+                width: "40%",
+                background: "rgba(255,255,255,0.95)",
+                borderRadius: "12px",
+                padding: "1.5vh 1vw",
+                display: "flex",
+                flexDirection: "column",
                 overflow: "hidden",
               }}
             >
-              {gameResults.slice(0, 8).map((result, index) => (
+              {/* Stats Grid - Compact */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: "1vh",
+                  marginBottom: "1.5vh",
+                  height: "20vh",
+                }}
+              >
                 <div
-                  key={`${result.question}-${index}`}
                   style={{
+                    background: "#4CAF50",
+                    color: "white",
+                    padding: "1vh",
+                    borderRadius: "8px",
+                    textAlign: "center",
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.8vh 1.2vh",
-                    borderRadius: "6px",
-                    background: result.correct
-                      ? "rgba(76, 175, 80, 0.1)"
-                      : "rgba(244, 67, 54, 0.1)",
-                    border: result.correct
-                      ? "2px solid rgba(76, 175, 80, 0.3)"
-                      : "2px solid rgba(244, 67, 54, 0.3)",
-                    fontSize: "min(1.8vh, 1.2vw)",
-                    minHeight: 0,
-                    maxHeight: "100%",
+                    flexDirection: "column",
+                    justifyContent: "center",
                   }}
                 >
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                      flex: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      marginRight: "1vw",
-                    }}
+                  <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
+                    Correct
+                  </div>
+                  <div
+                    style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
                   >
-                    {result.correct ? "✅" : "❌"} {result.question}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "min(1.6vh, 1vw)",
-                      opacity: "0.8",
-                      fontWeight: "bold",
-                      minWidth: "3vw",
-                      textAlign: "right",
-                    }}
-                  >
-                    {result.timeTaken}s
-                  </span>
+                    {correctAnswers}/{totalQuestions}
+                  </div>
                 </div>
-              ))}
+
+                <div
+                  style={{
+                    background: "#2196F3",
+                    color: "white",
+                    padding: "1vh",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
+                    Accuracy
+                  </div>
+                  <div
+                    style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
+                  >
+                    {percentage}%
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: "#FF9800",
+                    color: "white",
+                    padding: "1vh",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
+                    Total Time
+                  </div>
+                  <div
+                    style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
+                  >
+                    {totalTime}s
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: "#9C27B0",
+                    color: "white",
+                    padding: "1vh",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ fontSize: "min(1.8vh, 1vw)", opacity: "0.9" }}>
+                    Avg/Q
+                  </div>
+                  <div
+                    style={{ fontSize: "min(2.8vh, 2vw)", fontWeight: "bold" }}
+                  >
+                    {avgTime}s
+                  </div>
+                </div>
+              </div>
+
+              {/* Performance Banner - Compact */}
+              <div
+                style={{
+                  background:
+                    percentage >= 80
+                      ? "#4CAF50"
+                      : percentage >= 60
+                      ? "#FF9800"
+                      : "#f44336",
+                  color: "white",
+                  padding: "2vh 1vw",
+                  borderRadius: "12px",
+                  textAlign: "center",
+                  height: "8vh",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{ fontSize: "min(2.5vh, 1.8vw)", fontWeight: "bold" }}
+                >
+                  {performanceLevel}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Bottom Buttons - Fixed Height */}
-        <div
-          style={{
-            height: "9vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "1.5vw",
-          }}
-        >
-          <button
-            onClick={() => setShowReport(false)}
-            style={{
-              background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-              color: "white",
-              border: "none",
-              padding: "1.2vh 2vw",
-              borderRadius: "20px",
-              fontSize: "min(2.2vh, 1.5vw)",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            Close Report
-          </button>
-          <button
-            onClick={() => startGame(currentMap)}
-            style={{
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              color: "white",
-              border: "none",
-              padding: "1.2vh 2vw",
-              borderRadius: "20px",
-              fontSize: "min(2.2vh, 1.5vw)",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            {texts[language].playAgain}
-          </button>
-          <button
-            onClick={resetGame}
-            style={{
-              background: "linear-gradient(135deg, #fd79a8 0%, #fdcbf1 100%)",
-              color: "white",
-              border: "none",
-              padding: "1.2vh 2vw",
-              borderRadius: "20px",
-              fontSize: "min(2.2vh, 1.5vw)",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            {texts[language].backToMenu}
-          </button>
-        </div>
-      </div>
-    );
-
-    // Show report if requested
-    if (showReport) {
-      return <ReportScreen />;
-    }
-
-    // Main completion screen
-    return (
-      <div style={styles.container}>
-        <div
-          style={{
-            padding: "2vh 2vw",
-            textAlign: "center",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <div style={{ fontSize: "8vh", marginBottom: "2vh" }}>🎉</div>
-          <h1
-            style={{
-              fontSize: "min(6vh, 4vw)",
-              color: "white",
-              marginBottom: "2vh",
-            }}
-          >
-            {texts[language].gameOver}
-          </h1>
-          <div
-            style={{
-              fontSize: "min(5vh, 3vw)",
-              color: "#FFD700",
-              fontWeight: "bold",
-              marginBottom: "2vh",
-            }}
-          >
-            {texts[language].finalScore}: {score}
-          </div>
-          <div
-            style={{
-              fontSize: "min(3vh, 2vw)",
-              color: "rgba(255,255,255,0.9)",
-              marginBottom: "4vh",
-            }}
-          >
-            {correctAnswers}/{totalQuestions} ({percentage}%)
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "2vw",
-              flexWrap: "wrap",
-              marginBottom: "2vh",
-            }}
-          >
-            <button
-              onClick={() => setShowReport(true)}
+            {/* Right Panel - Question Details (60% width) */}
+            <div
               style={{
-                background: "linear-gradient(135deg, #2196F3 0%, #42A5F5 100%)",
-                color: "white",
-                border: "none",
-                padding: "2vh 3vw",
-                borderRadius: "25px",
-                fontSize: "min(3vh, 2vw)",
-                fontWeight: "bold",
-                cursor: "pointer",
+                width: "60%",
+                background: "rgba(255,255,255,0.95)",
+                borderRadius: "12px",
+                padding: "1.5vh 1vw",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
               }}
             >
-              📊 {texts[language].viewReport}
-            </button>
+              <h3
+                style={{
+                  color: "#2d3748",
+                  marginBottom: "1vh",
+                  fontSize: "min(2.5vh, 1.8vw)",
+                  textAlign: "center",
+                  height: "4vh",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Question Details
+              </h3>
+
+              {/* Fixed height container for questions */}
+              <div
+                style={{
+                  height: "calc(100% - 5vh)",
+                  display: "grid",
+                  gridTemplateRows: `repeat(${Math.min(
+                    gameResults.length,
+                    8
+                  )}, 1fr)`,
+                  gap: "0.5vh",
+                  overflow: "hidden",
+                }}
+              >
+                {gameResults.slice(0, 8).map((result, index) => (
+                  <div
+                    key={`${result.question}-${index}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "0.8vh 1.2vh",
+                      borderRadius: "6px",
+                      background: result.correct
+                        ? "rgba(76, 175, 80, 0.1)"
+                        : "rgba(244, 67, 54, 0.1)",
+                      border: result.correct
+                        ? "2px solid rgba(76, 175, 80, 0.3)"
+                        : "2px solid rgba(244, 67, 54, 0.3)",
+                      fontSize: "min(1.8vh, 1.2vw)",
+                      minHeight: 0,
+                      maxHeight: "100%",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        marginRight: "1vw",
+                      }}
+                    >
+                      {result.correct ? "✅" : "❌"} {result.question}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "min(1.6vh, 1vw)",
+                        opacity: "0.8",
+                        fontWeight: "bold",
+                        minWidth: "3vw",
+                        textAlign: "right",
+                      }}
+                    >
+                      {result.timeTaken}s
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
+          {/* Bottom Buttons - Fixed Height */}
           <div
             style={{
+              height: "9vh",
               display: "flex",
               justifyContent: "center",
-              gap: "2vw",
-              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "1.5vw",
             }}
           >
             <button
-              onClick={() => startGame(currentMap)}
+              onClick={() => setShowReport(false)}
               style={{
                 background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
                 color: "white",
                 border: "none",
-                padding: "2vh 3vw",
-                borderRadius: "25px",
-                fontSize: "min(3vh, 2vw)",
+                padding: "1.2vh 2vw",
+                borderRadius: "20px",
+                fontSize: "min(2.2vh, 1.5vw)",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Close Report
+            </button>
+            <button
+              onClick={() => startGame(currentMap)}
+              style={{
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                border: "none",
+                padding: "1.2vh 2vw",
+                borderRadius: "20px",
+                fontSize: "min(2.2vh, 1.5vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}
@@ -1146,12 +1516,12 @@ const GeographyGame = () => {
             <button
               onClick={resetGame}
               style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                background: "linear-gradient(135deg, #fd79a8 0%, #fdcbf1 100%)",
                 color: "white",
                 border: "none",
-                padding: "2vh 3vw",
-                borderRadius: "25px",
-                fontSize: "min(3vh, 2vw)",
+                padding: "1.2vh 2vw",
+                borderRadius: "20px",
+                fontSize: "min(2.2vh, 1.5vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}
@@ -1160,7 +1530,143 @@ const GeographyGame = () => {
             </button>
           </div>
         </div>
-      </div>
+      </>
+    );
+
+    // Show report if requested
+    if (showReport) {
+      return <ReportScreen />;
+    }
+
+    // Main completion screen
+    return (
+      <>
+        {showConfetti && (
+          <div
+            style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
+          >
+            <ConfettiExplosion
+              force={0.8}
+              duration={3000}
+              particleCount={150}
+              width={1600}
+            />
+          </div>
+        )}
+        <div style={styles.container}>
+          <div
+            style={{
+              padding: "2vh 2vw",
+              textAlign: "center",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ fontSize: "8vh", marginBottom: "2vh" }}>🎉</div>
+            <h1
+              style={{
+                fontSize: "min(6vh, 4vw)",
+                color: "white",
+                marginBottom: "2vh",
+              }}
+            >
+              {texts[language].gameOver}
+            </h1>
+            <div
+              style={{
+                fontSize: "min(5vh, 3vw)",
+                color: "#FFD700",
+                fontWeight: "bold",
+                marginBottom: "2vh",
+              }}
+            >
+              {texts[language].finalScore}: {score}
+            </div>
+            <div
+              style={{
+                fontSize: "min(3vh, 2vw)",
+                color: "rgba(255,255,255,0.9)",
+                marginBottom: "4vh",
+              }}
+            >
+              {correctAnswers}/{totalQuestions} ({percentage}%)
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "2vw",
+                flexWrap: "wrap",
+                marginBottom: "2vh",
+              }}
+            >
+              <button
+                onClick={() => setShowReport(true)}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #2196F3 0%, #42A5F5 100%)",
+                  color: "white",
+                  border: "none",
+                  padding: "2vh 3vw",
+                  borderRadius: "25px",
+                  fontSize: "min(3vh, 2vw)",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                📊 {texts[language].viewReport}
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "2vw",
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={() => startGame(currentMap)}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                  color: "white",
+                  border: "none",
+                  padding: "2vh 3vw",
+                  borderRadius: "25px",
+                  fontSize: "min(3vh, 2vw)",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {texts[language].playAgain}
+              </button>
+              <button
+                onClick={resetGame}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
+                  border: "none",
+                  padding: "2vh 3vw",
+                  borderRadius: "25px",
+                  fontSize: "min(3vh, 2vw)",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {texts[language].backToMenu}
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -1171,72 +1677,103 @@ const GeographyGame = () => {
   const mapAreaBackground = `linear-gradient(135deg, ${currentMapConfig.bgColor} 0%, rgba(255,255,255,0.1) 100%)`;
 
   return (
-    <div style={styles.container}>
-      {/* Notification */}
-      {notification && (
+    <>
+      {showConfetti && (
         <div
-          style={{
-            position: "fixed",
-            top: "2vh",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1000,
-            background:
-              notification.type === "success"
-                ? "#4CAF50"
-                : notification.type === "error"
-                ? "#f44336"
-                : "#2196F3",
-            color: "white",
-            padding: "1.5vh 3vw",
-            borderRadius: "25px",
-            fontSize: "min(3vh, 2vw)",
-            fontWeight: "bold",
-            pointerEvents: "none",
-          }}
+          style={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
         >
-          {notification.message}
+          <ConfettiExplosion
+            force={0.8}
+            duration={3000}
+            particleCount={150}
+            width={1600}
+          />
         </div>
       )}
-      <br />
-      <br />
-      <div style={styles.gameWrapper}>
-        {/* Sidebar */}
-        <div style={styles.sidebar}>
-          {/* Header */}
+      <div style={styles.container}>
+        {/* Notification */}
+        {notification && (
           <div
             style={{
-              textAlign: "center",
-              marginBottom: "2vh",
-              paddingBottom: "1vh",
-              borderBottom: "2px solid rgba(255,255,255,0.3)",
+              position: "fixed",
+              top: "2vh",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 1000,
+              background:
+                notification.type === "success"
+                  ? "#4CAF50"
+                  : notification.type === "error"
+                  ? "#f44336"
+                  : "#2196F3",
+              color: "white",
+              padding: "1.5vh 3vw",
+              borderRadius: "25px",
+              fontSize: "min(3vh, 2vw)",
+              fontWeight: "bold",
+              pointerEvents: "none",
             }}
           >
-            <h2
-              style={{
-                fontSize: "min(3vh, 2vw)",
-                color: "white",
-                margin: 0,
-                fontWeight: "bold",
-                marginBottom: "1vh",
-              }}
-            >
-              {currentMapConfig.name[language]}
-            </h2>
+            {notification.message}
+          </div>
+        )}
+        <br />
+        <br />
+        <div style={styles.gameWrapper}>
+          {/* Sidebar */}
+          <div style={styles.sidebar}>
+            {/* Header */}
             <div
               style={{
-                fontSize: "min(2vh, 1.5vw)",
-                color: "rgba(255,255,255,0.8)",
-                marginBottom: "1vh",
+                textAlign: "center",
+                marginBottom: "2vh",
+                paddingBottom: "1vh",
+                borderBottom: "2px solid rgba(255,255,255,0.3)",
               }}
             >
-              {texts[language].question} {currentQuestionIndex + 1}/
-              {currentMapConfig.points.length}
+              <h2
+                style={{
+                  fontSize: "min(3vh, 2vw)",
+                  color: "white",
+                  margin: 0,
+                  fontWeight: "bold",
+                  marginBottom: "1vh",
+                }}
+              >
+                {currentMapConfig.name[language]}
+              </h2>
+              <div
+                style={{
+                  fontSize: "min(2vh, 1.5vw)",
+                  color: "rgba(255,255,255,0.8)",
+                  marginBottom: "1vh",
+                }}
+              >
+                {texts[language].question} {currentQuestionIndex + 1}/
+                {currentMapConfig.points.length}
+              </div>
+              <button
+                onClick={() =>
+                  setLanguage(language === "english" ? "tamil" : "english")
+                }
+                style={{
+                  background: "rgba(255,255,255,0.3)",
+                  color: "white",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                  padding: "1vh 2vw",
+                  borderRadius: "20px",
+                  fontSize: "min(2vh, 1.5vw)",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {texts[language].language}
+              </button>
             </div>
+
+            {/* Back Button */}
             <button
-              onClick={() =>
-                setLanguage(language === "english" ? "tamil" : "english")
-              }
+              onClick={resetGame}
               style={{
                 background: "rgba(255,255,255,0.3)",
                 color: "white",
@@ -1246,70 +1783,155 @@ const GeographyGame = () => {
                 fontSize: "min(2vh, 1.5vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
+                marginBottom: "2vh",
+                width: "100%",
               }}
             >
-              {texts[language].language}
+              ← {texts[language].backToMenu}
             </button>
-          </div>
 
-          {/* Back Button */}
-          <button
-            onClick={resetGame}
-            style={{
-              background: "rgba(255,255,255,0.3)",
-              color: "white",
-              border: "2px solid rgba(255,255,255,0.3)",
-              padding: "1vh 2vw",
-              borderRadius: "20px",
-              fontSize: "min(2vh, 1.5vw)",
-              fontWeight: "bold",
-              cursor: "pointer",
-              marginBottom: "2vh",
-              width: "100%",
-            }}
-          >
-            ← {texts[language].backToMenu}
-          </button>
-
-          {/* Stats */}
-          <div style={{ display: "flex", gap: "1vw", marginBottom: "2vh" }}>
-            <div
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                borderRadius: "12px",
-                padding: "1.5vh 1vw",
-                textAlign: "center",
-                flex: 1,
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "min(2vh, 1.2vw)",
-                  color: "rgba(255,255,255,0.8)",
-                  margin: "0 0 1vh 0",
-                }}
-              >
-                {texts[language].score}
-              </h3>
+            {/* Stats */}
+            <div style={{ display: "flex", gap: "1vw", marginBottom: "2vh" }}>
               <div
                 style={{
-                  fontSize: "min(4vh, 2.5vw)",
-                  fontWeight: "bold",
-                  color: "#FFD700",
+                  background: "rgba(255,255,255,0.2)",
+                  borderRadius: "12px",
+                  padding: "1.5vh 1vw",
+                  textAlign: "center",
+                  flex: 1,
+                  backdropFilter: "blur(10px)",
                 }}
               >
-                {score}
+                <h3
+                  style={{
+                    fontSize: "min(2vh, 1.2vw)",
+                    color: "rgba(255,255,255,0.8)",
+                    margin: "0 0 1vh 0",
+                  }}
+                >
+                  {texts[language].score}
+                </h3>
+                <div
+                  style={{
+                    fontSize: "min(4vh, 2.5vw)",
+                    fontWeight: "bold",
+                    color: "#FFD700",
+                  }}
+                >
+                  {score}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  borderRadius: "12px",
+                  padding: "1.5vh 1vw",
+                  textAlign: "center",
+                  flex: 1,
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "min(2vh, 1.2vw)",
+                    color: "rgba(255,255,255,0.8)",
+                    margin: "0 0 1vh 0",
+                  }}
+                >
+                  {texts[language].timeLeft}
+                </h3>
+                <div
+                  style={{
+                    fontSize: "min(4vh, 2.5vw)",
+                    fontWeight: "bold",
+                    color: timeLeft <= 10 ? "#FF6B6B" : "#FF9800",
+                  }}
+                >
+                  {timeLeft}s
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "0.5vh",
+                    background: "rgba(255,255,255,0.2)",
+                    borderRadius: "0.25vh",
+                    marginTop: "1vh",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${(timeLeft / 40) * 100}%`,
+                      height: "100%",
+                      background: timeLeft <= 10 ? "#FF6B6B" : "#FF9800",
+                      transition: "width 1s linear",
+                      borderRadius: "0.25vh",
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
+            {/* Current Question - Much Smaller Size */}
             <div
               style={{
                 background: "rgba(255,255,255,0.2)",
-                borderRadius: "12px",
-                padding: "1.5vh 1vw",
+                borderRadius: "10px",
+                padding: "1vh 0.8vw",
                 textAlign: "center",
-                flex: 1,
+                backdropFilter: "blur(10px)",
+                marginBottom: "2vh",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "min(1.6vh, 1vw)",
+                  color: "rgba(255,255,255,0.8)",
+                  margin: "0 0 0.8vh 0",
+                }}
+              >
+                Find This Location
+              </h3>
+
+              <div
+                style={{
+                  fontSize: "min(2.2vh, 1.5vw)",
+                  fontWeight: "bold",
+                  color: "white",
+                  marginBottom: "0.8vh",
+                  padding: "0.8vh 0.6vw",
+                  borderRadius: "6px",
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.4)",
+                  userSelect: "none",
+                  wordWrap: "break-word",
+                  minHeight: "auto",
+                }}
+              >
+                🎯{" "}
+                {currentPoint
+                  ? currentPoint[language] || currentPoint.name
+                  : "Loading..."}
+              </div>
+
+              <div
+                style={{
+                  fontSize: "min(1.4vh, 0.8vw)",
+                  color: "rgba(255,255,255,0.7)",
+                  fontStyle: "italic",
+                }}
+              >
+                {texts[language].dragToMap}
+              </div>
+            </div>
+
+            {/* Progress */}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.2)",
+                borderRadius: "15px",
+                padding: "2vh 1vw",
+                textAlign: "center",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -1320,297 +1942,195 @@ const GeographyGame = () => {
                   margin: "0 0 1vh 0",
                 }}
               >
-                {texts[language].timeLeft}
+                Progress
               </h3>
-              <div
-                style={{
-                  fontSize: "min(4vh, 2.5vw)",
-                  fontWeight: "bold",
-                  color: timeLeft <= 10 ? "#FF6B6B" : "#FF9800",
-                }}
-              >
-                {timeLeft}s
-              </div>
               <div
                 style={{
                   width: "100%",
-                  height: "0.5vh",
+                  height: "1vh",
                   background: "rgba(255,255,255,0.2)",
-                  borderRadius: "0.25vh",
-                  marginTop: "1vh",
+                  borderRadius: "0.5vh",
+                  overflow: "hidden",
+                  marginBottom: "1vh",
                 }}
               >
                 <div
                   style={{
-                    width: `${(timeLeft / 40) * 100}%`,
+                    width: `${
+                      (currentQuestionIndex / currentMapConfig.points.length) *
+                      100
+                    }%`,
                     height: "100%",
-                    background: timeLeft <= 10 ? "#FF6B6B" : "#FF9800",
-                    transition: "width 1s linear",
-                    borderRadius: "0.25vh",
+                    background: "#4CAF50",
+                    transition: "width 0.3s ease",
+                    borderRadius: "0.5vh",
                   }}
                 />
               </div>
-            </div>
-          </div>
-
-          {/* Current Question - Much Smaller Size */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: "10px",
-              padding: "1vh 0.8vw",
-              textAlign: "center",
-              backdropFilter: "blur(10px)",
-              marginBottom: "2vh",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "min(1.6vh, 1vw)",
-                color: "rgba(255,255,255,0.8)",
-                margin: "0 0 0.8vh 0",
-              }}
-            >
-              Find This Location
-            </h3>
-
-            <div
-              style={{
-                fontSize: "min(2.2vh, 1.5vw)",
-                fontWeight: "bold",
-                color: "white",
-                marginBottom: "0.8vh",
-                padding: "0.8vh 0.6vw",
-                borderRadius: "6px",
-                background: "rgba(255,255,255,0.1)",
-                border: "1px solid rgba(255,255,255,0.4)",
-                userSelect: "none",
-                wordWrap: "break-word",
-                minHeight: "auto",
-              }}
-            >
-              🎯{" "}
-              {currentPoint
-                ? currentPoint[language] || currentPoint.name
-                : "Loading..."}
-            </div>
-
-            <div
-              style={{
-                fontSize: "min(1.4vh, 0.8vw)",
-                color: "rgba(255,255,255,0.7)",
-                fontStyle: "italic",
-              }}
-            >
-              {texts[language].dragToMap}
-            </div>
-          </div>
-
-          {/* Progress */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: "15px",
-              padding: "2vh 1vw",
-              textAlign: "center",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "min(2vh, 1.2vw)",
-                color: "rgba(255,255,255,0.8)",
-                margin: "0 0 1vh 0",
-              }}
-            >
-              Progress
-            </h3>
-            <div
-              style={{
-                width: "100%",
-                height: "1vh",
-                background: "rgba(255,255,255,0.2)",
-                borderRadius: "0.5vh",
-                overflow: "hidden",
-                marginBottom: "1vh",
-              }}
-            >
               <div
                 style={{
-                  width: `${
-                    (currentQuestionIndex / currentMapConfig.points.length) *
-                    100
-                  }%`,
-                  height: "100%",
-                  background: "#4CAF50",
-                  transition: "width 0.3s ease",
-                  borderRadius: "0.5vh",
-                }}
-              />
-            </div>
-            <div
-              style={{
-                fontSize: "min(2.5vh, 1.5vw)",
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              {currentQuestionIndex}/{currentMapConfig.points.length}
-            </div>
-          </div>
-        </div>
-
-        {/* Map Area */}
-        <div
-          style={{
-            ...styles.mapArea,
-            background: mapAreaBackground,
-          }}
-        >
-          <div
-            ref={mapElementRef}
-            onClick={handleMapClick}
-            onTouchStart={handleMapClick}
-            style={{
-              ...styles.mapDisplay,
-              backgroundImage: currentMapConfig.bgImage,
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              position: "relative",
-              cursor: isAnswered ? "default" : "pointer",
-            }}
-          >
-            {/* Answer feedback overlay */}
-            {isAnswered && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: "rgba(0,0,0,0.1)",
-                  borderRadius: "inherit",
-                  pointerEvents: "none",
-                  zIndex: 5,
-                }}
-              />
-            )}
-
-            {/* Enhanced Visual Feedback Markers */}
-            {showingAnswers.wrong && (
-              <div
-                style={{
-                  position: "absolute",
-                  left: `${showingAnswers.wrong.x}%`,
-                  top: `${showingAnswers.wrong.y}%`,
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 15,
-                  pointerEvents: "none",
+                  fontSize: "min(2.5vh, 1.5vw)",
+                  color: "white",
+                  fontWeight: "bold",
                 }}
               >
-                <div
-                  style={{
-                    width: "min(6vh, 4vw)",
-                    height: "min(6vh, 4vw)",
-                    borderRadius: "50%",
-                    background: "#f44336",
-                    border: "3px solid white",
-                    boxShadow: "0 4px 15px rgba(244, 67, 54, 0.5)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontSize: "min(3vh, 2vw)",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ✗
-                </div>
+                {currentQuestionIndex}/{currentMapConfig.points.length}
+              </div>
+            </div>
+          </div>
+
+          {/* Map Area */}
+          <div
+            style={{
+              ...styles.mapArea,
+              background: mapAreaBackground,
+            }}
+          >
+            <div
+              ref={mapElementRef}
+              onClick={handleMapClick}
+              onTouchStart={handleMapClick}
+              style={{
+                ...styles.mapDisplay,
+                backgroundImage: currentMapConfig.bgImage,
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                position: "relative",
+                cursor: isAnswered ? "default" : "pointer",
+              }}
+            >
+              {/* Answer feedback overlay */}
+              {isAnswered && (
                 <div
                   style={{
                     position: "absolute",
-                    top: "100%",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "#f44336",
-                    color: "white",
-                    padding: "0.5vh 1vw",
-                    borderRadius: "8px",
-                    fontSize: "min(2vh, 1.2vw)",
-                    fontWeight: "bold",
-                    marginTop: "0.5vh",
-                    whiteSpace: "nowrap",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0,0,0,0.1)",
+                    borderRadius: "inherit",
+                    pointerEvents: "none",
+                    zIndex: 5,
                   }}
-                >
-                  Wrong
-                </div>
-              </div>
-            )}
+                />
+              )}
 
-            {showingAnswers.correct && (
-              <div
-                style={{
-                  position: "absolute",
-                  left: `${showingAnswers.correct.x}%`,
-                  top: `${showingAnswers.correct.y}%`,
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 20,
-                  pointerEvents: "none",
-                }}
-              >
-                <div
-                  style={{
-                    width: "min(6vh, 4vw)",
-                    height: "min(6vh, 4vw)",
-                    borderRadius: "50%",
-                    background: showingAnswers.wrong ? "#2196F3" : "#4CAF50",
-                    border: "3px solid white",
-                    boxShadow: `0 4px 15px ${
-                      showingAnswers.wrong
-                        ? "rgba(33, 150, 243, 0.5)"
-                        : "rgba(76, 175, 80, 0.5)"
-                    }`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontSize: "min(3vh, 2vw)",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ✓
-                </div>
+              {/* Enhanced Visual Feedback Markers */}
+              {showingAnswers.wrong && (
                 <div
                   style={{
                     position: "absolute",
-                    top: "100%",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: showingAnswers.wrong ? "#2196F3" : "#4CAF50",
-                    color: "white",
-                    padding: "1vh 1.5vw",
-                    borderRadius: "8px",
-                    fontSize: "min(2vh, 1.2vw)",
-                    fontWeight: "bold",
-                    marginTop: "0.5vh",
-                    whiteSpace: "nowrap",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-                    maxWidth: "20vw",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    left: `${showingAnswers.wrong.x}%`,
+                    top: `${showingAnswers.wrong.y}%`,
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 15,
+                    pointerEvents: "none",
                   }}
                 >
-                  {showingAnswers.correct.name}
+                  <div
+                    style={{
+                      width: "min(6vh, 4vw)",
+                      height: "min(6vh, 4vw)",
+                      borderRadius: "50%",
+                      background: "#f44336",
+                      border: "3px solid white",
+                      boxShadow: "0 4px 15px rgba(244, 67, 54, 0.5)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontSize: "min(3vh, 2vw)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ✗
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "#f44336",
+                      color: "white",
+                      padding: "0.5vh 1vw",
+                      borderRadius: "8px",
+                      fontSize: "min(2vh, 1.2vw)",
+                      fontWeight: "bold",
+                      marginTop: "0.5vh",
+                      whiteSpace: "nowrap",
+                      boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                    }}
+                  >
+                    Wrong
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {showingAnswers.correct && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: `${showingAnswers.correct.x}%`,
+                    top: `${showingAnswers.correct.y}%`,
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 20,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "min(6vh, 4vw)",
+                      height: "min(6vh, 4vw)",
+                      borderRadius: "50%",
+                      background: showingAnswers.wrong ? "#2196F3" : "#4CAF50",
+                      border: "3px solid white",
+                      boxShadow: `0 4px 15px ${
+                        showingAnswers.wrong
+                          ? "rgba(33, 150, 243, 0.5)"
+                          : "rgba(76, 175, 80, 0.5)"
+                      }`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontSize: "min(3vh, 2vw)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ✓
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: showingAnswers.wrong ? "#2196F3" : "#4CAF50",
+                      color: "white",
+                      padding: "1vh 1.5vw",
+                      borderRadius: "8px",
+                      fontSize: "min(2vh, 1.2vw)",
+                      fontWeight: "bold",
+                      marginTop: "0.5vh",
+                      whiteSpace: "nowrap",
+                      boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                      maxWidth: "20vw",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {showingAnswers.correct.name}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

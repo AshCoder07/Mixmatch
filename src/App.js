@@ -366,7 +366,93 @@ function App() {
       <LanguageProvider>
         <Router>
           <div className="min-h-screen app-bg">
-            <AppRoutes />
+            <div
+              style={{
+                height: "calc(100vh - 40px)", // Exact height accounting for footer
+                overflow: "hidden", // No scrolling - everything must fit
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <AppRoutes />
+            </div>
+            {/* Footer text at the bottom */}
+            <div
+              style={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                color: "white",
+                padding: "8px 16px",
+                textAlign: "center",
+                fontSize: "12px",
+                fontWeight: "500",
+                zIndex: 1000,
+                borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <span style={{ flex: 1 }}>
+                Designed and compiled by Department of Computer Science and
+                Engineering, R. M. K. Engineering College
+              </span>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(145deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05))",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  borderRadius: "8px",
+                  color: "white",
+                  padding: "4px 12px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  boxShadow: `
+                  inset 0 1px 0 rgba(255,255,255,0.4),
+                  inset 0 -1px 0 rgba(0,0,0,0.2),
+                  0 2px 4px rgba(0,0,0,0.3)
+                `,
+                  textShadow: "0 1px 1px rgba(0,0,0,0.5)",
+                  transition: "all 0.2s ease",
+                  whiteSpace: "nowrap",
+                  marginLeft: "16px",
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background =
+                    "linear-gradient(145deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background =
+                    "linear-gradient(145deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05))";
+                  e.target.style.transform = "translateY(0)";
+                }}
+                onMouseDown={(e) => {
+                  e.target.style.boxShadow = `
+                  inset 0 1px 0 rgba(0,0,0,0.2),
+                  inset 0 -1px 0 rgba(255,255,255,0.1),
+                  0 1px 2px rgba(0,0,0,0.2)
+                `;
+                  e.target.style.transform = "translateY(1px)";
+                }}
+                onMouseUp={(e) => {
+                  e.target.style.boxShadow = `
+                  inset 0 1px 0 rgba(255,255,255,0.4),
+                  inset 0 -1px 0 rgba(0,0,0,0.2),
+                  0 2px 4px rgba(0,0,0,0.3)
+                `;
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+              >
+                Source: TNSCERT
+              </button>
+            </div>
           </div>
         </Router>
       </LanguageProvider>
