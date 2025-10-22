@@ -144,7 +144,9 @@ const UserScores = () => {
   const getBestScore = () => {
     if (scores.length === 0) return null;
     return scores.reduce((best, current) => {
-      return current.score > best.score ? current : best;
+      const bestPercentage = Math.round((best.score / best.maxScore) * 100);
+      const currentPercentage = Math.round((current.score / current.maxScore) * 100);
+      return currentPercentage > bestPercentage ? current : best;
     });
   };
 
@@ -164,6 +166,7 @@ const UserScores = () => {
 
   const bestScore = getBestScore();
   const averageScore = getAverageScore();
+  const bestPercentage = bestScore ? calculatePercentage(bestScore) : 0;
 
   return (
     <div className="user-scores-container">
@@ -212,10 +215,10 @@ const UserScores = () => {
       {scores.length > 0 && (
         <div className="summary-stats">
           <div className="stat-card">
-            <h3>🏆 Best Score</h3>
-            <div className="stat-value">{bestScore?.score || 0}</div>
+            <h3>🏆 Best Percentage</h3>
+            <div className="stat-value">{bestPercentage}%</div>
             <div className="stat-detail">
-              {calculatePercentage(bestScore) || 0}%
+              {bestScore?.score || 0}/{bestScore?.maxScore || 0}
             </div>
           </div>
           <div className="stat-card">
