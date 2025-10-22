@@ -1194,21 +1194,21 @@ const GeographyGame = () => {
         )}
         <div
           style={{
-            height: "100vh",
+            height: "90vh",
             width: "100vw",
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
-            padding: "1vh 1vw",
+            padding: "0.5vh 1vw 1vh 1vw",
           }}
         >
           {/* Compact Header */}
           <div
             style={{
               textAlign: "center",
-              marginBottom: "1vh",
-              height: "8vh",
+              marginBottom: "0.5vh",
+              height: "6vh",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -1216,7 +1216,7 @@ const GeographyGame = () => {
           >
             <h2
               style={{
-                fontSize: "min(3.5vh, 2.5vw)",
+                fontSize: "min(3vh, 2.2vw)",
                 color: "white",
                 margin: 0,
                 textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
@@ -1226,7 +1226,7 @@ const GeographyGame = () => {
             </h2>
             <div
               style={{
-                fontSize: "min(2vh, 1.5vw)",
+                fontSize: "min(1.8vh, 1.3vw)",
                 color: "rgba(255,255,255,0.9)",
                 fontWeight: "bold",
               }}
@@ -1241,9 +1241,9 @@ const GeographyGame = () => {
               flex: 1,
               display: "flex",
               gap: "1vw",
-              height: "82vh",
-              maxHeight: "82vh",
-              minHeight: "82vh",
+              height: "74vh",
+              maxHeight: "74vh",
+              minHeight: "74vh",
             }}
           >
             {/* Left Panel - Statistics (40% width) */}
@@ -1263,9 +1263,9 @@ const GeographyGame = () => {
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(2, 1fr)",
-                  gap: "1vh",
-                  marginBottom: "1.5vh",
-                  height: "20vh",
+                  gap: "0.8vh",
+                  marginBottom: "1vh",
+                  height: "16vh",
                 }}
               >
                 <div
@@ -1367,13 +1367,14 @@ const GeographyGame = () => {
                       ? "#FF9800"
                       : "#f44336",
                   color: "white",
-                  padding: "2vh 1vw",
+                  padding: "1.5vh 1vw",
                   borderRadius: "12px",
                   textAlign: "center",
-                  height: "8vh",
+                  height: "6vh",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  marginTop: "2vh",
                 }}
               >
                 <div
@@ -1399,10 +1400,10 @@ const GeographyGame = () => {
               <h3
                 style={{
                   color: "#2d3748",
-                  marginBottom: "1vh",
-                  fontSize: "min(2.5vh, 1.8vw)",
+                  marginBottom: "0.5vh",
+                  fontSize: "min(2.2vh, 1.6vw)",
                   textAlign: "center",
-                  height: "4vh",
+                  height: "3vh",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -1414,7 +1415,7 @@ const GeographyGame = () => {
               {/* Fixed height container for questions */}
               <div
                 style={{
-                  height: "calc(100% - 5vh)",
+                  height: "calc(100% - 4vh)",
                   display: "grid",
                   gridTemplateRows: `repeat(${Math.min(
                     gameResults.length,
@@ -1476,11 +1477,12 @@ const GeographyGame = () => {
           {/* Bottom Buttons - Fixed Height */}
           <div
             style={{
-              height: "9vh",
+              height: "8vh",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               gap: "1.5vw",
+              marginTop: "0.5vh",
             }}
           >
             <button
@@ -1489,9 +1491,9 @@ const GeographyGame = () => {
                 background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
                 color: "white",
                 border: "none",
-                padding: "1.2vh 2vw",
+                padding: "1vh 2vw",
                 borderRadius: "20px",
-                fontSize: "min(2.2vh, 1.5vw)",
+                fontSize: "min(2vh, 1.4vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}
@@ -1504,9 +1506,9 @@ const GeographyGame = () => {
                 background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 color: "white",
                 border: "none",
-                padding: "1.2vh 2vw",
+                padding: "1vh 2vw",
                 borderRadius: "20px",
-                fontSize: "min(2.2vh, 1.5vw)",
+                fontSize: "min(2vh, 1.4vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}
@@ -1519,9 +1521,9 @@ const GeographyGame = () => {
                 background: "linear-gradient(135deg, #fd79a8 0%, #fdcbf1 100%)",
                 color: "white",
                 border: "none",
-                padding: "1.2vh 2vw",
+                padding: "1vh 2vw",
                 borderRadius: "20px",
-                fontSize: "min(2.2vh, 1.5vw)",
+                fontSize: "min(2vh, 1.4vw)",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}
@@ -1556,32 +1558,34 @@ const GeographyGame = () => {
         <div style={styles.container}>
           <div
             style={{
-              padding: "2vh 2vw",
+              padding: "1vh 2vw 2vh 2vw",
               textAlign: "center",
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              height: "100vh",
+              minHeight: "90vh",
+              maxHeight: "90vh",
+              height: "90vh",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
+              justifyContent: "space-evenly",
               overflow: "hidden",
             }}
           >
-            <div style={{ fontSize: "8vh", marginBottom: "2vh" }}>🎉</div>
+            <div style={{ fontSize: "min(8vh, 6vw)", marginBottom: "1vh" }}>🎉</div>
             <h1
               style={{
-                fontSize: "min(6vh, 4vw)",
+                fontSize: "min(5vh, 3.5vw)",
                 color: "white",
-                marginBottom: "2vh",
+                marginBottom: "1vh",
               }}
             >
               {texts[language].gameOver}
             </h1>
             <div
               style={{
-                fontSize: "min(5vh, 3vw)",
+                fontSize: "min(4.5vh, 3vw)",
                 color: "#FFD700",
                 fontWeight: "bold",
-                marginBottom: "2vh",
+                marginBottom: "1vh",
               }}
             >
               {texts[language].finalScore}: {score}
@@ -1590,7 +1594,7 @@ const GeographyGame = () => {
               style={{
                 fontSize: "min(3vh, 2vw)",
                 color: "rgba(255,255,255,0.9)",
-                marginBottom: "4vh",
+                marginBottom: "2vh",
               }}
             >
               {correctAnswers}/{totalQuestions} ({percentage}%)
@@ -1612,9 +1616,9 @@ const GeographyGame = () => {
                     "linear-gradient(135deg, #2196F3 0%, #42A5F5 100%)",
                   color: "white",
                   border: "none",
-                  padding: "2vh 3vw",
+                  padding: "1.5vh 3vw",
                   borderRadius: "25px",
-                  fontSize: "min(3vh, 2vw)",
+                  fontSize: "min(2.5vh, 1.8vw)",
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}
@@ -1629,6 +1633,7 @@ const GeographyGame = () => {
                 justifyContent: "center",
                 gap: "2vw",
                 flexWrap: "wrap",
+                marginBottom: "2vh",
               }}
             >
               <button
@@ -1638,9 +1643,9 @@ const GeographyGame = () => {
                     "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
                   color: "white",
                   border: "none",
-                  padding: "2vh 3vw",
+                  padding: "1.5vh 3vw",
                   borderRadius: "25px",
-                  fontSize: "min(3vh, 2vw)",
+                  fontSize: "min(2.5vh, 1.8vw)",
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}
@@ -1654,9 +1659,9 @@ const GeographyGame = () => {
                     "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   color: "white",
                   border: "none",
-                  padding: "2vh 3vw",
+                  padding: "1.5vh 3vw",
                   borderRadius: "25px",
-                  fontSize: "min(3vh, 2vw)",
+                  fontSize: "min(2.5vh, 1.8vw)",
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}

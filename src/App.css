@@ -457,9 +457,10 @@ html, body {
 
 .member-name {
   display: block;
-  font-weight: 500;
+  /* Use same base typography as mentor English name for consistency */
+  font-size: 0.78rem;
+  font-weight: 700;
   margin-bottom: 0.4rem;
-  font-size: 0.7rem;
   opacity: 0.95;
   transition: var(--transition);
   line-height: 1.2;
@@ -468,6 +469,25 @@ html, body {
 .member-name:hover {
   opacity: 1;
   transform: translateX(2px);
+}
+
+/* Mentor bilingual styling: English above, Tamil below with clear alignment */
+.mentor-name-english {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+  display: block;
+  text-align: center;
+}
+
+.mentor-name-tamil {
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.95;
+  color: rgba(255, 255, 255, 0.95);
+  display: block;
+  text-align: center;
+  direction: ltr; /* keep Tamil left-to-right rendering consistent */
 }
 
 /* Back Button - Compact */

@@ -1521,9 +1521,7 @@ const checkAnswer = () => {
         </div>
       </div>
 
-      <div className="progress-bar">
-        <div className="progress-fill" style={{width: `${progress}%`}}></div>
-      </div>
+      {/* Progress bar removed to reduce load */}
 
       <div key={`question-card-${currentQuestionIndex}`} className="question-card">
         <h2>{questionData.question}</h2>

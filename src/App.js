@@ -105,7 +105,7 @@ const translations = {
     mentor: "Mentor:",
     nikhita: "Tharigopula Nikhita - III/CSE",
     sheeba: "Sheeba Sherlin S - III/CSE",
-    mentorName: "M P Karthikeyan - Associate Professor/CSE",
+    mentorName: "Mr. M P Karthikeyan - MTech.,(Ph.D), Associate Professor/CSE",
     backToMenu: "← Back to Home",
     languageToggle: "தமிழ்",
     myScores: "My Scores",
@@ -247,14 +247,8 @@ const EnhancedHeader = memo(() => {
         </div>
       </div>
       <div className="header-section">
-        {language === "english" ? (
-          <>
-            <h2 className="main-title">{translations[language].appTitle}</h2>
-            <h2 className="main-title">{translations["tamil"].appTitle}</h2>
-          </>
-        ) : (
-          <h2 className="main-title">{translations[language].appTitle}</h2>
-        )}
+        {/* Show only the currently selected language's title */}
+        <h2 className="main-title">{translations[language].appTitle}</h2>
         <p className="game-selection-prompt">
           {translations[language].selectGame}
         </p>
@@ -301,9 +295,19 @@ const TeamMembersSection = memo(() => {
         {/* Column 3 */}
         <div className="team-column">
           <span className="member-title">{translations[language].mentor}</span>
-          <span className="member-name">
-            {translations[language].mentorName}
-          </span>
+          {/* Render mentor name according to selected language only */}
+          {language === "tamil" ? (
+            <span
+              className="member-name mentor-name-tamil"
+              aria-label={translations["tamil"].mentorName}
+            >
+              {translations["tamil"].mentorName}
+            </span>
+          ) : (
+            <span className="member-name mentor-name-english">
+              {translations["english"].mentorName}
+            </span>
+          )}
         </div>
       </div>
     </div>
