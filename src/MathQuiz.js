@@ -1838,6 +1838,7 @@ const MathQuiz = memo(() => {
       alignItems: "center",
       marginBottom: "1rem",
       padding: "0 1rem",
+      paddingRight: "60px", // Move left to avoid overlapping with mute button
     };
 
     const timerStyle = {

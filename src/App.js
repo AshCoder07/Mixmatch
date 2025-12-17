@@ -39,6 +39,7 @@ const Leaderboard = lazy(() => import("./Leaderboard"));
 import Logo1 from "./assets/Logo1.png";
 import tn from "./assets/tn.jpg";
 import Footer from "./Footer";
+import backgroundMusic from "./assets/audio.mp3";
 
 // Loading component
 const LoadingSpinner = () => (
@@ -327,6 +328,66 @@ const Home = memo(() => (
   </div>
 ));
 
+/* ---------------- BACKGROUND MUSIC PLAYER ---------------- */
+const BackgroundMusicPlayer = () => {
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3; // Set volume to 30%
+      audioRef.current.play().catch(err => console.log('Audio autoplay prevented:', err));
+    }
+  }, []);
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <>
+      <audio ref={audioRef} loop>
+        <source src={backgroundMusic} type="audio/mpeg" />
+      </audio>
+      <button
+        onClick={toggleMute}
+        style={{
+          position: 'fixed',
+          top: '15px',
+          right: '15px',
+          width: '35px',
+          height: '35px',
+          borderRadius: '50%',
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          color: 'white',
+          fontSize: '16px',
+          cursor: 'pointer',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+          zIndex: 9999,
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backdropFilter: 'blur(5px)',
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'scale(1.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'scale(1)';
+        }}
+        title={isMuted ? 'Unmute' : 'Mute'}
+      >
+        {isMuted ? '🔇' : '🔊'}
+      </button>
+    </>
+  );
+};
+
 /* ---------------- ROUTES ---------------- */
 const AppRoutes = () => {
   const { user } = useUser();
@@ -344,6 +405,7 @@ const AppRoutes = () => {
 
   return (
     <>
+      <BackgroundMusicPlayer />
       <BackButton />
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>

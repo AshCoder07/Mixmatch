@@ -90,6 +90,11 @@ html, body {
   padding: 1rem 1rem; /* increased top and bottom padding from 0.5rem to 1rem */
   background: var(--purple-gradient);
   color: white;
+  gap: 2rem; /* Add gap between user info and language toggle */
+}
+
+.header-top > *:last-child {
+  margin-right: 50px; /* Move language toggle button to the left */
 }
 
 
