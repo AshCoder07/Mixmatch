@@ -11,6 +11,9 @@ import IndianRiverMap from "./assets/IndianRiverMap.png";
 import WorldMap from "./assets/WorldMap.png";
 import { useUser } from "./UserContext";
 import ConfettiExplosion from "react-confetti-explosion";
+import congratsSound from "./assets/Congratulations Sound Effect.mp3";
+import victorySound from "./assets/Victory.mp3";
+import wrongSound from "./assets/Wrong.mp3";
 
 // Updated coordinates based on the map screenshots
 const tamilNaduPoints = [
@@ -717,6 +720,10 @@ const GeographyGame = () => {
         setScore((s) => s + 10);
         showNotification(texts[language].correct, "success");
 
+        // Play congratulations sound
+        const audio = new Audio(congratsSound);
+        audio.play().catch(err => console.log('Audio play failed:', err));
+
         // Show confetti for correct answer
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 1000);
@@ -731,6 +738,10 @@ const GeographyGame = () => {
           wrong: null,
         });
       } else {
+        // Play wrong sound
+        const audio = new Audio(wrongSound);
+        audio.play().catch(err => console.log('Wrong audio play failed:', err));
+        
         showNotification(texts[language].incorrect, "error");
 
         // Show red marker at clicked position and blue marker at best correct position
@@ -794,6 +805,10 @@ const GeographyGame = () => {
         hasUser: !!user,
         hasSaveScore: !!saveScore,
       });
+
+      // Play victory audio when game ends
+      const audio = new Audio(victorySound);
+      audio.play().catch(err => console.log('Victory audio play failed:', err));
 
       if (user && saveScore && !scoreSavedRef.current) {
         console.log("✅ endGame - Proceeding to save (flag is false)");

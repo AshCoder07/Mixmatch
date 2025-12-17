@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { useUser } from "./UserContext";
 import ConfettiExplosion from 'react-confetti-explosion';
+import congratsSound from './assets/Congratulations Sound Effect.mp3';
+import victorySound from './assets/Victory.mp3';
+import wrongSound from './assets/Wrong.mp3';
 
 // Simple translations
 const translations = {
@@ -733,6 +736,14 @@ const WordGame = memo(() => {
 
   const t = translations[language];
 
+  // Play victory audio when results screen is shown
+  useEffect(() => {
+    if (currentScreen === "results") {
+      const audio = new Audio(victorySound);
+      audio.play().catch(err => console.log('Victory audio play failed:', err));
+    }
+  }, [currentScreen]);
+
   // Timer configuration
   const getTimerDuration = (level) => {
     switch (level) {
@@ -813,6 +824,10 @@ const WordGame = memo(() => {
     if (!chosenLetters.includes(letter) && timerActive) {
       setChosenLetters([...chosenLetters, letter]);
       if (!wordData.word.includes(letter)) {
+        // Play wrong sound
+        const audio = new Audio(wrongSound);
+        audio.play().catch(err => console.log('Wrong audio play failed:', err));
+        
         const newWrongGuesses = wrongGuesses + 1;
         setWrongGuesses(newWrongGuesses);
 
@@ -866,10 +881,18 @@ const WordGame = memo(() => {
       setCorrectAnswers(correctAnswers + 1);
       setFeedback({ message: t.correctGuess, type: "correct" });
       
+      // Play congratulations sound
+      const audio = new Audio(congratsSound);
+      audio.play().catch(err => console.log('Audio play failed:', err));
+      
       // Show confetti for correct answer
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 1000);
     } else {
+      // Play wrong sound
+      const audio = new Audio(wrongSound);
+      audio.play().catch(err => console.log('Wrong audio play failed:', err));
+      
       setFeedback({
         message: t.wrongGuess,
         type: "incorrect",

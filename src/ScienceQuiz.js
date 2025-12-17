@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import './ScienceQuiz.css';
 import { useUser } from './UserContext';
 import ConfettiExplosion from 'react-confetti-explosion';
+import congratsSound from './assets/Congratulations Sound Effect.mp3';
+import victorySound from './assets/Victory.mp3';
+import wrongSound from './assets/Wrong.mp3';
 const questionSets = {
   level1: [
    {
@@ -1179,9 +1182,13 @@ const ScienceQuiz = memo(() => {
     return () => clearTimeout(timer);
   }, [timeLeft, gameState]);
 
-  // Trigger confetti on results screen
+  // Trigger confetti and victory audio on results screen
   useEffect(() => {
     if (gameState === 'results') {
+      // Play victory audio
+      const audio = new Audio(victorySound);
+      audio.play().catch(err => console.log('Victory audio play failed:', err));
+      
       setShowConfetti(true);
       const timer = setTimeout(() => setShowConfetti(false), 3000);
       return () => clearTimeout(timer);
@@ -1332,8 +1339,16 @@ const checkAnswer = () => {
   setShowResults(true);
 
   if (correctCount > 0) {
+    // Play congratulations sound
+    const audio = new Audio(congratsSound);
+    audio.play().catch(err => console.log('Audio play failed:', err));
+    
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 1500);
+  } else {
+    // Play wrong sound if no correct matches
+    const audio = new Audio(wrongSound);
+    audio.play().catch(err => console.log('Wrong audio play failed:', err));
   }
 
   // FIXED: Only update score, don't save here

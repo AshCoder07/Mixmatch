@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './ImageWordIdentification.css';
 import { useUser } from './UserContext';
-
+import congratsSound from './assets/Congratulations Sound Effect.mp3';
+import victorySound from './assets/Victory.mp3';
+import wrongSound from './assets/Wrong.mp3';
 const Notification = ({ message, isVisible, type }) => {
   if (!isVisible) return null;
 
@@ -333,10 +335,18 @@ export default function ImageWordIdentification() {
       setStreak(prev => prev + 1);
       showNotification(language === 'en' ? 'Correct! 🎉' : 'சரி! 🎉', 'correct');
       
+      // Play congratulations sound
+      const audio = new Audio(congratsSound);
+      audio.play().catch(err => console.log('Audio play failed:', err));
+      
       if ((streak + 1) % 3 === 0) {
         setShowConfetti(true);
       }
     } else {
+      // Play wrong sound
+      const audio = new Audio(wrongSound);
+      audio.play().catch(err => console.log('Wrong audio play failed:', err));
+      
       setStreak(0);
       showNotification(language === 'en' ? 'Try again! 💪' : 'மீண்டும் முயற்சிக்கவும்! 💪', 'incorrect');
     }
@@ -369,6 +379,11 @@ export default function ImageWordIdentification() {
       setCurrentQuestion(0);
       setSelectedOption(null);
       setShowExplanation(false);
+      
+      // Play victory audio when quiz is completed
+      const audio = new Audio(victorySound);
+      audio.play().catch(err => console.log('Victory audio play failed:', err));
+      
       showNotification(
         language === 'en' 
           ? `Quiz Complete! Final Score: ${score}/${gameData[currentLevel].length}` 

@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfettiExplosion from 'react-confetti-explosion';
 import { useUser } from "./UserContext";
+import congratsSound from './assets/Congratulations Sound Effect.mp3';
+import victorySound from './assets/Victory.mp3';
+import wrongSound from './assets/Wrong.mp3';
 
 const PartsMarkingGame = () => {
   const navigate = useNavigate();
@@ -1549,6 +1552,10 @@ const PartsMarkingGame = () => {
           newSet.add(part);
           setLastSelectedPart(part); // Show description when selecting
 
+          // Play congratulations sound
+          const audio = new Audio(congratsSound);
+          audio.play().catch(err => console.log('Audio play failed:', err));
+
           // Show confetti for correct selection
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 1000);
@@ -1590,6 +1597,10 @@ const PartsMarkingGame = () => {
     const finalScore = selectedParts.size;
     setScore(finalScore);
     setShowAnswers(true);
+
+    // Play victory audio when results are shown
+    const audio = new Audio(victorySound);
+    audio.play().catch(err => console.log('Victory audio play failed:', err));
 
     // Save score to UserContext
     const maxPossibleScore = topics[selectedTopic].parts.length;

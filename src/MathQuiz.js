@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, memo, useRef } from "react";
 import { useUser } from "./UserContext";
 import ConfettiExplosion from 'react-confetti-explosion';
+import congratsSound from './assets/Congratulations Sound Effect.mp3';
+import victorySound from './assets/Victory.mp3';
+import wrongSound from './assets/Wrong.mp3';
 
 // Tamil Translations
 const translations = {
@@ -1653,6 +1656,14 @@ const MathQuiz = memo(() => {
     currentQuestionIndex,
   ]);
 
+  // Play victory audio when results screen is shown
+  useEffect(() => {
+    if (currentScreen === "results") {
+      const audio = new Audio(victorySound);
+      audio.play().catch(err => console.log('Victory audio play failed:', err));
+    }
+  }, [currentScreen]);
+
   // Start test function
   const startTest = (level) => {
     setSelectedLevel(level);
@@ -1697,10 +1708,18 @@ const MathQuiz = memo(() => {
       setScore((prev) => prev + 1);
       setFeedback({ message: t.correct, type: "correct" });
       
+      // Play congratulations sound
+      const audio = new Audio(congratsSound);
+      audio.play().catch(err => console.log('Audio play failed:', err));
+      
       // Show confetti for correct answer
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 1000);
     } else {
+      // Play wrong sound
+      const audio = new Audio(wrongSound);
+      audio.play().catch(err => console.log('Wrong audio play failed:', err));
+      
       setFeedback({
         message:
           language === "english"
